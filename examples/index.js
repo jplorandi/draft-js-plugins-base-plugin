@@ -1,7 +1,9 @@
 import ReactDOM from 'react-dom';
 import React from 'react'; // eslint-disable-line no-unused-vars
 import EmbeddableEditor from './embeddable-editor'; // eslint-disable-line no-unused-vars
+import log from 'loglevel';
 
+log.setDefaultLevel(log.levels.TRACE);
 function main() {
 
   var editorElement = document.body;
@@ -12,7 +14,7 @@ function main() {
 
   ReactDOM.render(root, editorElement);
 
-  console.log('Editor Started');
+  log.info('Editor Started');
 
 }
 

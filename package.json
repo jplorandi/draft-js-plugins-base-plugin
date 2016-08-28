@@ -25,7 +25,6 @@
     "example-dev": "cd examples && webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
   },
-
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.14.0",
@@ -55,6 +54,7 @@
     "draft-js": "^0.8.1",
     "draft-js-plugins-editor": "^1.1.0",
     "immutable": "^3.8.1",
+    "loglevel": "^1.4.1",
     "react-decorate": "^5.1.1"
   }
 }

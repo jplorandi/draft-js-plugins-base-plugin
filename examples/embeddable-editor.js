@@ -9,6 +9,7 @@ import Editor from 'draft-js-plugins-editor'; // eslint-disable-line no-unused-v
 import {EditorState, ContentState} from 'draft-js';
 import AltImagePlugin from './plugins/image/index';
 import uuid from 'uuid';
+import log from 'loglevel';
 
 import createEntityPropsPlugin from 'draft-js-entity-props-plugin';
 import {Map} from 'immutable';
@@ -70,7 +71,7 @@ class EmbeddableEditor extends Component {
 
     const toolbarComponents = imagePlugin.toolbarComponents();
 
-    console.log('components: ', toolbarComponents);
+    log.trace('components: ', toolbarComponents);
     this.buttons = toolbarComponents.map((Button) => <Button key={uuid.v4() } />);
 
     this.onChange = this.onChange.bind(this);
@@ -81,7 +82,7 @@ class EmbeddableEditor extends Component {
     if (this.props.onChange) {
       const md = editorState.toString('markdown');
 
-      console.log(md);
+      log.debug(md);
       this.props.onChange(md);
     }
   }

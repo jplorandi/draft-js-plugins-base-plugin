@@ -8189,9 +8189,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _embeddableEditor2 = _interopRequireDefault(_embeddableEditor);
 	
+	var _loglevel = __webpack_require__(625);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// eslint-disable-line no-unused-vars
+	_loglevel2.default.setDefaultLevel(_loglevel2.default.levels.TRACE); // eslint-disable-line no-unused-vars
 	
 	function main() {
 	
@@ -8201,9 +8206,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  _reactDom2.default.render(root, editorElement);
 	
-	  console.log('Editor Started');
-	} // eslint-disable-line no-unused-vars
-	
+	  _loglevel2.default.info('Editor Started');
+	}
 	
 	main();
 	
@@ -29434,6 +29438,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
+	var _loglevel = __webpack_require__(625);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
 	var _draftJsEntityPropsPlugin = __webpack_require__(623);
 	
 	var _draftJsEntityPropsPlugin2 = _interopRequireDefault(_draftJsEntityPropsPlugin);
@@ -29519,7 +29527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var toolbarComponents = imagePlugin.toolbarComponents();
 	
-	    console.log('components: ', toolbarComponents);
+	    _loglevel2.default.trace('components: ', toolbarComponents);
 	    _this.buttons = toolbarComponents.map(function (Button) {
 	      return _react2.default.createElement(Button, { key: _uuid2.default.v4() });
 	    });
@@ -29535,7 +29543,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (this.props.onChange) {
 	        var md = editorState.toString('markdown');
 	
-	        console.log(md);
+	        _loglevel2.default.debug(md);
 	        this.props.onChange(md);
 	      }
 	    }
@@ -53071,6 +53079,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
+	var _loglevel = __webpack_require__(625);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -53166,10 +53178,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      event.stopPropagation();
 	      event.preventDefault();
 	
-	      var value = {};
-	      var entityKey = _draftJs.Entity.create('block-image', 'IMMUTABLE', { src: value.url, progress: -1, width: value.width, height: value.height });
+	      var value = { url: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Humphrey_Bogart_1940.jpg',
+	        width: 527, height: 746, alt: 'Bogey' };
 	
-	      console.log('props.plugin', this.props.plugin);
+	      var entityKey = _draftJs.Entity.create('block-image', 'IMMUTABLE', { src: value.url, progress: -1, width: value.width, height: value.height, alt: value.alt });
+	
+	      _loglevel2.default.trace('props.plugin', this.props.plugin);
 	      this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
 	
 	      return false;
@@ -53229,6 +53243,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _index2 = _interopRequireDefault(_index);
 	
 	var _reactDecorate = __webpack_require__(613);
+	
+	var _loglevel = __webpack_require__(625);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -53326,10 +53344,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'toolbarComponents',
 	    value: function toolbarComponents() {
 	      return this.uiComponents.map(function (uiComponent) {
-	        console.log('ui Component: ', uiComponent.component);
+	        _loglevel2.default.trace('ui Component: ', uiComponent.component);
 	        var decorated = PluginAsProp(this)(uiComponent.component);
 	
-	        console.log('decorated: ', decorated);
+	        _loglevel2.default.trace('decorated: ', decorated);
 	        return decorated;
 	      });
 	    }
@@ -54128,6 +54146,235 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	var _draftJs = __webpack_require__(470);
+
+/***/ },
+/* 625 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+	* loglevel - https://github.com/pimterry/loglevel
+	*
+	* Copyright (c) 2013 Tim Perry
+	* Licensed under the MIT license.
+	*/
+	(function (root, definition) {
+	    "use strict";
+	    if (true) {
+	        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof module === 'object' && module.exports) {
+	        module.exports = definition();
+	    } else {
+	        root.log = definition();
+	    }
+	}(this, function () {
+	    "use strict";
+	    var noop = function() {};
+	    var undefinedType = "undefined";
+	
+	    function realMethod(methodName) {
+	        if (typeof console === undefinedType) {
+	            return false; // We can't build a real method without a console to log to
+	        } else if (console[methodName] !== undefined) {
+	            return bindMethod(console, methodName);
+	        } else if (console.log !== undefined) {
+	            return bindMethod(console, 'log');
+	        } else {
+	            return noop;
+	        }
+	    }
+	
+	    function bindMethod(obj, methodName) {
+	        var method = obj[methodName];
+	        if (typeof method.bind === 'function') {
+	            return method.bind(obj);
+	        } else {
+	            try {
+	                return Function.prototype.bind.call(method, obj);
+	            } catch (e) {
+	                // Missing bind shim or IE8 + Modernizr, fallback to wrapping
+	                return function() {
+	                    return Function.prototype.apply.apply(method, [obj, arguments]);
+	                };
+	            }
+	        }
+	    }
+	
+	    // these private functions always need `this` to be set properly
+	
+	    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
+	        return function () {
+	            if (typeof console !== undefinedType) {
+	                replaceLoggingMethods.call(this, level, loggerName);
+	                this[methodName].apply(this, arguments);
+	            }
+	        };
+	    }
+	
+	    function replaceLoggingMethods(level, loggerName) {
+	        /*jshint validthis:true */
+	        for (var i = 0; i < logMethods.length; i++) {
+	            var methodName = logMethods[i];
+	            this[methodName] = (i < level) ?
+	                noop :
+	                this.methodFactory(methodName, level, loggerName);
+	        }
+	    }
+	
+	    function defaultMethodFactory(methodName, level, loggerName) {
+	        /*jshint validthis:true */
+	        return realMethod(methodName) ||
+	               enableLoggingWhenConsoleArrives.apply(this, arguments);
+	    }
+	
+	    var logMethods = [
+	        "trace",
+	        "debug",
+	        "info",
+	        "warn",
+	        "error"
+	    ];
+	
+	    function Logger(name, defaultLevel, factory) {
+	      var self = this;
+	      var currentLevel;
+	      var storageKey = "loglevel";
+	      if (name) {
+	        storageKey += ":" + name;
+	      }
+	
+	      function persistLevelIfPossible(levelNum) {
+	          var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
+	
+	          // Use localStorage if available
+	          try {
+	              window.localStorage[storageKey] = levelName;
+	              return;
+	          } catch (ignore) {}
+	
+	          // Use session cookie as fallback
+	          try {
+	              window.document.cookie =
+	                encodeURIComponent(storageKey) + "=" + levelName + ";";
+	          } catch (ignore) {}
+	      }
+	
+	      function getPersistedLevel() {
+	          var storedLevel;
+	
+	          try {
+	              storedLevel = window.localStorage[storageKey];
+	          } catch (ignore) {}
+	
+	          if (typeof storedLevel === undefinedType) {
+	              try {
+	                  var cookie = window.document.cookie;
+	                  var location = cookie.indexOf(
+	                      encodeURIComponent(storageKey) + "=");
+	                  if (location) {
+	                      storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
+	                  }
+	              } catch (ignore) {}
+	          }
+	
+	          // If the stored level is not valid, treat it as if nothing was stored.
+	          if (self.levels[storedLevel] === undefined) {
+	              storedLevel = undefined;
+	          }
+	
+	          return storedLevel;
+	      }
+	
+	      /*
+	       *
+	       * Public API
+	       *
+	       */
+	
+	      self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
+	          "ERROR": 4, "SILENT": 5};
+	
+	      self.methodFactory = factory || defaultMethodFactory;
+	
+	      self.getLevel = function () {
+	          return currentLevel;
+	      };
+	
+	      self.setLevel = function (level, persist) {
+	          if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
+	              level = self.levels[level.toUpperCase()];
+	          }
+	          if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
+	              currentLevel = level;
+	              if (persist !== false) {  // defaults to true
+	                  persistLevelIfPossible(level);
+	              }
+	              replaceLoggingMethods.call(self, level, name);
+	              if (typeof console === undefinedType && level < self.levels.SILENT) {
+	                  return "No console available for logging";
+	              }
+	          } else {
+	              throw "log.setLevel() called with invalid level: " + level;
+	          }
+	      };
+	
+	      self.setDefaultLevel = function (level) {
+	          if (!getPersistedLevel()) {
+	              self.setLevel(level, false);
+	          }
+	      };
+	
+	      self.enableAll = function(persist) {
+	          self.setLevel(self.levels.TRACE, persist);
+	      };
+	
+	      self.disableAll = function(persist) {
+	          self.setLevel(self.levels.SILENT, persist);
+	      };
+	
+	      // Initialize with the right level
+	      var initialLevel = getPersistedLevel();
+	      if (initialLevel == null) {
+	          initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
+	      }
+	      self.setLevel(initialLevel, false);
+	    }
+	
+	    /*
+	     *
+	     * Package-level API
+	     *
+	     */
+	
+	    var defaultLogger = new Logger();
+	
+	    var _loggersByName = {};
+	    defaultLogger.getLogger = function getLogger(name) {
+	        if (typeof name !== "string" || name === "") {
+	          throw new TypeError("You must supply a name when creating a logger.");
+	        }
+	
+	        var logger = _loggersByName[name];
+	        if (!logger) {
+	          logger = _loggersByName[name] = new Logger(
+	            name, defaultLogger.getLevel(), defaultLogger.methodFactory);
+	        }
+	        return logger;
+	    };
+	
+	    // Grab the current global log variable in case of overwrite
+	    var _log = (typeof window !== undefinedType) ? window.log : undefined;
+	    defaultLogger.noConflict = function() {
+	        if (typeof window !== undefinedType &&
+	               window.log === defaultLogger) {
+	            window.log = _log;
+	        }
+	
+	        return defaultLogger;
+	    };
+	
+	    return defaultLogger;
+	}));
+
 
 /***/ }
 /******/ ])

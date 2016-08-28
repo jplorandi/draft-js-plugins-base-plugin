@@ -1,6 +1,7 @@
 import BasePlugin from '../../../src/index';
 import React, {Component} from 'react'; // eslint-disable-line no-unused-vars
 import {Entity} from 'draft-js';
+import log from 'loglevel';
 
 /**
  * This class handles how to render a block inside the editor (WYSIWYG)
@@ -52,11 +53,13 @@ class InsertImage extends Component {
     event.stopPropagation();
     event.preventDefault();
 
-    let value = {};
-    const entityKey = Entity.create('block-image', 'IMMUTABLE',
-      {src: value.url, progress: -1, width: value.width, height: value.height});
+    let value = {url: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Humphrey_Bogart_1940.jpg',
+      width: 527, height: 746, alt: 'Bogey'};
 
-    console.log('props.plugin', this.props.plugin);
+    const entityKey = Entity.create('block-image', 'IMMUTABLE',
+      {src: value.url, progress: -1, width: value.width, height: value.height, alt: value.alt});
+
+    log.trace('props.plugin', this.props.plugin);
     this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
 
     return false;

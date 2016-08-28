@@ -1,5 +1,6 @@
 import BlockUtils from './utils/index';
 import { makeDecorator } from 'react-decorate';
+import log from 'loglevel';
 
 const PluginAsPropFn = (plugin) => {
   return {
@@ -86,10 +87,10 @@ export class BasePlugin {
 
   toolbarComponents() {
     return this.uiComponents.map(function (uiComponent) {
-      console.log('ui Component: ', uiComponent.component);
+      log.trace('ui Component: ', uiComponent.component);
       const decorated = PluginAsProp(this)(uiComponent.component);
 
-      console.log('decorated: ', decorated);
+      log.trace('decorated: ', decorated);
       return decorated;
     });
   }
