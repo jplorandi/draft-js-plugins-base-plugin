@@ -53,25 +53,27 @@ export class BasePlugin {
     };
 
     this.toolbarComponents = this.toolbarComponents.bind(this);
+    this.blockRendererFn = this.blockRendererFn.bind(this);
   }
 
   blockRendererFn(contentBlock) {
     const blockType = contentBlock.getType();
 
-    log.trace('blockType: ', blockType);
-    let descriptor = this.renderComponentsDescriptors.reduce(
-      function (item, previous) {
-        if (previous) return previous;
-        if (blockType === item.type) {
-          return descriptor;
-        }
-        return undefined;
-      }, null
-    );
+    // log.trace('blockType: ', blockType);
+    // log.trace('renderComponentsDescriptors: ', this.renderComponentsDescriptors);
+    let descriptor = this.renderComponentsDescriptors.filter((item) => {
+      if (item.type === blockType) return item;
+      return null;
+    });
 
-    if (descriptor) {
+    // log.trace('descriptor: ', descriptor);
+
+    if (descriptor[0]) {
+      const CustomRenderComponent = descriptor[0].renderComponent;
+
+      log.trace('Returning custom render component: ', CustomRenderComponent);
       return {
-        component: descriptor.renderComponent,
+        component: CustomRenderComponent,
         editable: false
       };
     }
@@ -93,6 +95,8 @@ export class BasePlugin {
 
   onChange(editorState) {
     this.notifyBound(editorState);
+
+    return editorState;
   }
 
   notifyBound(editorState) {

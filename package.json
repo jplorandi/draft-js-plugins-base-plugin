@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "draft-js": "^0.8.1",
-    "draft-js-plugins-editor": "^1.1.0",
+    "draft-js-plugins-editor": "^2.0.0-beta.2",
     "immutable": "^3.8.1",
     "loglevel": "^1.4.1",
     "react-decorate": "^5.1.1"

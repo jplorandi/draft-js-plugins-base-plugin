@@ -9,6 +9,7 @@ import log from 'loglevel';
 class ImageRenderer extends Component {
   constructor(props) {
     super(props);
+    log.trace('ImageRenderer instanciated');
   }
 
   renderProgress(progress) {
@@ -60,7 +61,6 @@ class InsertImage extends Component {
     const entityKey = Entity.create('block-image', 'IMMUTABLE',
       {src: value.url, progress: -1, width: value.width, height: value.height, alt: value.alt});
 
-    log.trace('props.plugin', this.props.plugin);
     this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
 
     return false;

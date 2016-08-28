@@ -12,7 +12,7 @@ import uuid from 'uuid';
 import log from 'loglevel';
 
 import createEntityPropsPlugin from 'draft-js-entity-props-plugin';
-import {Map} from 'immutable';
+import {Map} from 'immutable'; // eslint-disable-line no-unused-vars
 import { DefaultDraftBlockRenderMap } from 'draft-js';
 
 const entityPlugin = createEntityPropsPlugin();
@@ -63,7 +63,8 @@ class EmbeddableEditor extends Component {
       };
     }
 
-    this.blockRenderMap = DefaultDraftBlockRenderMap.merge(Map(newObj)).merge(imagePlugin.blockRenderMap());
+    // this.blockRenderMap = DefaultDraftBlockRenderMap.merge(Map(newObj)).merge(imagePlugin.blockRenderMap());
+    this.blockRenderMap = DefaultDraftBlockRenderMap.merge(imagePlugin.blockRenderMap());
 
     this.state = {
       editorState: editorState,
@@ -86,13 +87,13 @@ class EmbeddableEditor extends Component {
       log.trace('onChange with undefined editorState!');
     }
 
-    if (this.props.onChange) {
-      log.trace('bubbling up onChange');
-      const md = this.store.getEditorState().toString('markdown');
-
-      log.debug(md);
-      this.props.onChange(md);
-    }
+    // if (this.props.onChange) {
+    //   log.trace('bubbling up onChange');
+    //   const md = this.state.getEditorState().toString('markdown');
+    //
+    //   log.debug(md);
+    //   this.props.onChange(md);
+    // }
   }
 
   render() {
