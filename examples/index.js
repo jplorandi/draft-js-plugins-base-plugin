@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
-import EmbeddableEditor from './editor'; // eslint-disable-line no-unused-vars
+import React from 'react'; // eslint-disable-line no-unused-vars
+import EmbeddableEditor from './embeddable-editor'; // eslint-disable-line no-unused-vars
 
 function main() {
 

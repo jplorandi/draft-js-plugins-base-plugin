@@ -1,5 +1,5 @@
 import BasePlugin from '../../../src/index';
-import {Component} from 'react';
+import React, {Component} from 'react'; // eslint-disable-line no-unused-vars
 import {Entity} from 'draft-js';
 
 /**
@@ -8,7 +8,6 @@ import {Entity} from 'draft-js';
 class ImageRenderer extends Component {
   constructor(props) {
     super(props);
-    this.plugin = props.plugin;
   }
 
   renderProgress(progress) {
@@ -45,7 +44,8 @@ class ImageRenderer extends Component {
 class InsertImage extends Component {
   constructor(props) {
     super(props);
-    this.plugin = props.plugin;
+
+    this.onActivate = this.onActivate.bind(this);
   }
 
   onActivate(event) {
@@ -56,9 +56,16 @@ class InsertImage extends Component {
     const entityKey = Entity.create('block-image', 'IMMUTABLE',
       {src: value.url, progress: -1, width: value.width, height: value.height});
 
-    this.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
+    console.log('props.plugin', this.props.plugin);
+    this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
 
     return false;
+  }
+
+  render() {
+    return (
+      <button onClick={this.onActivate}>Insert Image</button>
+    );
   }
 }
 
@@ -68,7 +75,7 @@ class InsertImage extends Component {
 class AltImagePlugin extends BasePlugin {
   constructor(config) {
     config.uiComponents = [{component: InsertImage, type: 'block-image'}];
-    config.renderComponentsDescriptors = [{component: ImageRenderer, type: 'block-image'}];
+    config.renderComponentsDescriptors = [{component: ImageRenderer, type: 'block-image', outerElement: 'span'}];
     super(config);
 
   }

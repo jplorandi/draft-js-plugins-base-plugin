@@ -1,12 +1,14 @@
-import {Component} from 'react';
+import React, {Component} from 'react'; // eslint-disable-line no-unused-vars
 // import {connect} from 'react-redux';
 // import {cancelDialog, createEdge} from '../actions/index';
 // import {bindActionCreators} from 'redux';
+import Draft from 'draft-js'; // eslint-disable-line no-unused-vars
 import DraftPasteProcessor from 'draft-js/lib/DraftPasteProcessor';
 import createRichButtonsPlugin from 'draft-js-richbuttons-plugin';
 import Editor from 'draft-js-plugins-editor'; // eslint-disable-line no-unused-vars
 import {EditorState, ContentState} from 'draft-js';
-import createImagePlugin from './plugins/image/index';
+import AltImagePlugin from './plugins/image/index';
+import uuid from 'uuid';
 
 import createEntityPropsPlugin from 'draft-js-entity-props-plugin';
 import {Map} from 'immutable';
@@ -20,7 +22,7 @@ const imageTheme = {
   image: 'image'
 };
 
-const imagePlugin = createImagePlugin({
+const imagePlugin = new AltImagePlugin({
   theme: imageTheme
 });
 
@@ -36,16 +38,7 @@ class EmbeddableEditor extends Component {
     const state = ContentState.createFromBlockArray(content);
     let editorState = EditorState.createWithContent(state);
 
-    // const entityKey = Entity.create('block-image', 'IMMUTABLE',
-    //   {src: 'http://www.proprofs.com/api/ckeditor_images/fruit(3).jpg', progress: -1});
-    // const entityKey2 = Entity.create('image', 'IMMUTABLE',
-    //   {src: 'http://www.proprofs.com/api/ckeditor_images/fruit(3).jpg', progress: -1});
-    //
-    //
-    // editorState = BlockUtils.insertBlock(editorState, entityKey, ' ', 'block-image');
-    // editorState = BlockUtils.insertBlock(editorState, entityKey2, ' ', 'block-image');
-
-    // console.log('DDBM: ', DefaultDraftBlockRenderMap);
+    this.plugins = [entityPlugin, richButtonsPlugin, imagePlugin];
 
     const { blockTypes } = props;
     // eslint-disable-next-line vars-on-top
@@ -55,9 +48,6 @@ class EmbeddableEditor extends Component {
       },
       'unstyled': {
         element: 'div'
-      },
-      'block-image': {
-        element: 'span'
       },
       'block-table': {
         element: 'div'
@@ -71,12 +61,18 @@ class EmbeddableEditor extends Component {
       };
     }
 
-    this.blockRenderMap = DefaultDraftBlockRenderMap.merge(Map(newObj));
+    this.blockRenderMap = DefaultDraftBlockRenderMap.merge(Map(newObj)).merge(imagePlugin.blockRenderMap());
 
     this.state = {
       editorState: editorState,
       blockRenderMap: this.blockRenderMap
     };
+
+    const toolbarComponents = imagePlugin.toolbarComponents();
+
+    console.log('components: ', toolbarComponents);
+    this.buttons = toolbarComponents.map((Button) => <Button key={uuid.v4() } />);
+
     this.onChange = this.onChange.bind(this);
   }
 
@@ -98,13 +94,14 @@ class EmbeddableEditor extends Component {
           <BoldButton/>
           <MonospaceButton/>
           <UnderlineButton/>
+          {this.buttons}
         </div>
         <div className='richtext-editor' style={{border: '1px solid rgb(0,0,0)'}}>
           <Editor
             editorState={this.state.editorState}
             blockRenderMap={this.state.blockRenderMap}
             onChange={this.onChange}
-            plugins={[entityPlugin, richButtonsPlugin, imagePlugin]}
+            plugins={this.plugins}
             ref='editor'
 
           />

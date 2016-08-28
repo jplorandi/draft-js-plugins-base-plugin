@@ -33,6 +33,8 @@ export class BasePlugin {
       getReadOnly: undefined,
       setReadOnly: undefined
     };
+
+    this.toolbarComponents = this.toolbarComponents.bind(this);
   }
 
   blockRendererFn(contentBlock) {
@@ -77,20 +79,31 @@ export class BasePlugin {
     if (this.store.currentState !== editorState) {
       this.store.currentState = this.store.getEditorState();
       this.uiComponents.forEach(function (bound) {
-        bound.notifyUpdate(editorState);
+        // bound.notifyUpdate(editorState);
       });
     }
   }
 
   toolbarComponents() {
     return this.uiComponents.map(function (uiComponent) {
-      PluginAsProp(this)(uiComponent.component);
+      console.log('ui Component: ', uiComponent.component);
+      const decorated = PluginAsProp(this)(uiComponent.component);
+
+      console.log('decorated: ', decorated);
+      return decorated;
     });
   }
 
   blockRenderMap() {
+    var map = {};
+
     if (!this.disableRenderMap) return undefined;
-    return Map();
+    this.renderComponentsDescriptors.forEach(function (item) {
+      if (item.type && item.outerElement) {
+        map[item.type] = item.outerElement;
+      }
+    });
+    return Map(map);
   }
 
   marshaller() {
