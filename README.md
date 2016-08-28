@@ -2,5 +2,6 @@
 
 A base draft-js plugin to create your own plugins.
 
-Supports toolbar components, rendering decorator, blockmap override,
-and import/export functionality, all in one place.
+Will support toolbar components, rendering decorator, blockRendermap 
+override, and import/export functionality, all in one place. 
+Presently it's only a peer review project.

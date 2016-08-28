@@ -1,8 +1,23 @@
 {
   "name": "draft-js-base-plugin",
-  "version": "1.0.0",
-  "description": "Abstract plugin for creating full plugins",
+  "version": "0.0.1",
+  "description": "A base draft-js plugin to create your own plugins",
   "main": "src/index.js",
+  "author": {
+    "name": "Juan Pablo Lorandi",
+    "email": "jp@cfyar.com",
+    "url": "http://www.cfyar.com"
+  },
+  "keywords": [
+    "draft-js",
+    "plugins",
+    "draft-js-plugins",
+    "images"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jplorandi/draft-js-plugins-base-plugin.git"
+  },
   "scripts": {
     "build": "webpack --mode=build",
     "dev": "webpack --progress --colors --watch --mode=dev",
@@ -10,7 +25,7 @@
     "example-dev": "cd examples && webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
   },
-  "author": "Juan Pablo Lorandi",
+
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.14.0",
