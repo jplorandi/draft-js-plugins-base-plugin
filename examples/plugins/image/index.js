@@ -1,28 +1,30 @@
 import BasePlugin from '../../../src/index';
-import React, {Component} from 'react';
+import {Component} from 'react';
 import {Entity} from 'draft-js';
-
 
 /**
  * This class handles how to render a block inside the editor (WYSIWYG)
  */
 class ImageRenderer extends Component {
   constructor(props) {
+    super(props);
     this.plugin = props.plugin;
   }
 
   renderProgress(progress) {
     return progress >= 0
-      ? <div className={theme.imageLoader} style={{width: `${100 - progress}%`}}/>
+      ? <div className={this.props.theme.imageLoader} style={{width: `${100 - progress}%`}}/>
       : null;
   }
 
   render() {
     const {alignmentClassName, focusClassName, blockProps, style, ...other} = this.props;
+    const {theme} = this.props;
     const {progress, src, url, alt} = blockProps.entityData;
     let {width, height} = blockProps.entityData;
-    if (!width) width = "100%";
-    if (!height) height = "100%";
+
+    if (!width) width = '100%';
+    if (!height) height = '100%';
 
     return (
       <span className={[theme.imageWrapper, alignmentClassName].filter(x => x).join(' ')}
@@ -42,6 +44,7 @@ class ImageRenderer extends Component {
  */
 class InsertImage extends Component {
   constructor(props) {
+    super(props);
     this.plugin = props.plugin;
   }
 
@@ -49,8 +52,10 @@ class InsertImage extends Component {
     event.stopPropagation();
     event.preventDefault();
 
+    let value = {};
     const entityKey = Entity.create('block-image', 'IMMUTABLE',
       {src: value.url, progress: -1, width: value.width, height: value.height});
+
     this.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
 
     return false;
@@ -67,8 +72,6 @@ class AltImagePlugin extends BasePlugin {
     super(config);
 
   }
-
-
 }
 
 export default AltImagePlugin;

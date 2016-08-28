@@ -10,7 +10,7 @@ var plugins = [new HtmlWebpackPlugin()], outputFile;
 outputFile = libraryName + '.js';
 
 var config = {
-  entry: ['babel-polyfill', __dirname + '/src/index.js'],
+  entry: ['babel-polyfill', __dirname + '/index.js'],
   devtool: 'source-map',
   output: {
     path: __dirname + '/dist',
@@ -41,11 +41,6 @@ var config = {
       {
         test: /(\.less)$/,
         loader: 'style-loader!css-loader!postcss-loader!less-loader'
-      },
-      {
-        test: /(\.js)$/,
-        loader: 'cssx-loader',
-        exclude: /node_modules/
       }
     ]
   },
