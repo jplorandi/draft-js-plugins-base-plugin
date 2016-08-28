@@ -57,6 +57,7 @@ class EmbeddableEditor extends Component {
 
     // eslint-disable-next-line vars-on-top
     for (var key in blockTypes) {
+      log.trace('map key: ', key);
       newObj[key] = {
         element: 'div'
       };
@@ -66,21 +67,28 @@ class EmbeddableEditor extends Component {
 
     this.state = {
       editorState: editorState,
-      blockRenderMap: this.blockRenderMap
+      blockRenderMap: this.blockRenderMap,
+      plugins: this.plugins
     };
 
     const toolbarComponents = imagePlugin.toolbarComponents();
 
-    log.trace('components: ', toolbarComponents);
-    this.buttons = toolbarComponents.map((Button) => <Button key={uuid.v4() } />);
+    log.trace('Toolbar Components: ', toolbarComponents);
+    this.buttons = toolbarComponents.map((ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />);
 
     this.onChange = this.onChange.bind(this);
   }
 
   onChange(editorState) {
-    this.setState({editorState: editorState});
+    if (editorState) {
+      this.setState({editorState: editorState});
+    } else {
+      log.trace('onChange with undefined editorState!');
+    }
+
     if (this.props.onChange) {
-      const md = editorState.toString('markdown');
+      log.trace('bubbling up onChange');
+      const md = this.store.getEditorState().toString('markdown');
 
       log.debug(md);
       this.props.onChange(md);
@@ -102,7 +110,7 @@ class EmbeddableEditor extends Component {
             editorState={this.state.editorState}
             blockRenderMap={this.state.blockRenderMap}
             onChange={this.onChange}
-            plugins={this.plugins}
+            plugins={this.state.plugins}
             ref='editor'
 
           />

@@ -18,6 +18,7 @@ class ImageRenderer extends Component {
   }
 
   render() {
+    log.trace('Inside ImageRenderer render');
     const {alignmentClassName, focusClassName, blockProps, style, ...other} = this.props;
     const {theme} = this.props;
     const {progress, src, url, alt} = blockProps.entityData;

@@ -1,12 +1,29 @@
 import BlockUtils from './utils/index';
 import { makeDecorator } from 'react-decorate';
-import log from 'loglevel';
+import log from 'loglevel'; // eslint-disable-line no-unused-vars
+import { PropTypes } from 'react';
+import Immutable from 'immutable';
 
 const PluginAsPropFn = (plugin) => {
   return {
     displayName() {
       return 'plugin';
     },
+
+    propTypes(propTypes) {
+      return {
+        ...propTypes,
+        plugin: PropTypes.object.isRequired
+      };
+    },
+
+    defaultProps(defaultProps) {
+      return {
+        ...defaultProps,
+        plugin: plugin
+      };
+    },
+
     nextProps(props) {
       return {
         ...props,
@@ -24,7 +41,7 @@ export const PluginAsProp = makeDecorator(PluginAsPropFn);
 export class BasePlugin {
   constructor(config) {
     this.uiComponents = config.uiComponents || [];
-    this.disableRenderMap = config.disableRenderMap;
+    this.disableRenderMap = config.disableRenderMap || false;
     this.renderComponentsDescriptors = config.renderComponentsDescriptors || [];
     this.theme = config.theme || {};
     this.store = {
@@ -40,13 +57,15 @@ export class BasePlugin {
 
   blockRendererFn(contentBlock) {
     const blockType = contentBlock.getType();
+
+    log.trace('blockType: ', blockType);
     let descriptor = this.renderComponentsDescriptors.reduce(
       function (item, previous) {
         if (previous) return previous;
         if (blockType === item.type) {
           return descriptor;
         }
-        return null;
+        return undefined;
       }, null
     );
 
@@ -86,11 +105,11 @@ export class BasePlugin {
   }
 
   toolbarComponents() {
-    return this.uiComponents.map(function (uiComponent) {
-      log.trace('ui Component: ', uiComponent.component);
-      const decorated = PluginAsProp(this)(uiComponent.component);
+    var self = this;
 
-      log.trace('decorated: ', decorated);
+    return this.uiComponents.map(function (uiComponent) {
+      const decorated = PluginAsProp(self)(uiComponent.component);
+
       return decorated;
     });
   }
@@ -98,13 +117,15 @@ export class BasePlugin {
   blockRenderMap() {
     var map = {};
 
-    if (!this.disableRenderMap) return undefined;
+    if (this.disableRenderMap) return {};
     this.renderComponentsDescriptors.forEach(function (item) {
       if (item.type && item.outerElement) {
         map[item.type] = item.outerElement;
       }
     });
-    return Map(map);
+
+    log.trace('map: ', map);
+    return Immutable.Map(map);
   }
 
   marshaller() {
