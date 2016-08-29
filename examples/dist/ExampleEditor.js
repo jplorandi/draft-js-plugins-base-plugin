@@ -8189,15 +8189,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _embeddableEditor2 = _interopRequireDefault(_embeddableEditor);
 	
-	var _loglevel = __webpack_require__(723);
+	var _loglevel = __webpack_require__(724);
 	
 	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// eslint-disable-line no-unused-vars
-	_loglevel2.default.setDefaultLevel(_loglevel2.default.levels.TRACE); // eslint-disable-line no-unused-vars
-	
 	function main() {
 	
 	  var editorElement = document.body;
@@ -8207,7 +8205,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _reactDom2.default.render(root, editorElement);
 	
 	  _loglevel2.default.info('Editor Started');
-	}
+	} // eslint-disable-line no-unused-vars
+	
 	
 	main();
 	
@@ -29434,19 +29433,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _uuid = __webpack_require__(724);
+	var _uuid = __webpack_require__(727);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
-	var _loglevel = __webpack_require__(723);
+	var _loglevel = __webpack_require__(724);
 	
 	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
-	var _draftJsEntityPropsPlugin = __webpack_require__(726);
+	var _draftJsEntityPropsPlugin = __webpack_require__(729);
 	
 	var _draftJsEntityPropsPlugin2 = _interopRequireDefault(_draftJsEntityPropsPlugin);
 	
-	var _immutable = __webpack_require__(714);
+	var _immutable = __webpack_require__(715);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -67223,25 +67222,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _index = __webpack_require__(712);
-	
-	var _index2 = _interopRequireDefault(_index);
 	
 	var _react = __webpack_require__(463);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _draftJs = __webpack_require__(470);
+	var _imageRenderer = __webpack_require__(725);
 	
-	var _loglevel = __webpack_require__(723);
+	var _imageRenderer2 = _interopRequireDefault(_imageRenderer);
 	
-	var _loglevel2 = _interopRequireDefault(_loglevel);
+	var _insertImage = __webpack_require__(726);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -67250,124 +67243,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
 	
 	
-	// eslint-disable-line no-unused-vars
-	
-	/**
-	 * This class handles how to render a block inside the editor (WYSIWYG)
-	 */
-	var ImageRenderer = function (_Component) {
-	  _inherits(ImageRenderer, _Component);
-	
-	  function ImageRenderer(props) {
-	    _classCallCheck(this, ImageRenderer);
-	
-	    return _possibleConstructorReturn(this, (ImageRenderer.__proto__ || Object.getPrototypeOf(ImageRenderer)).call(this, props));
-	  }
-	
-	  _createClass(ImageRenderer, [{
-	    key: 'renderProgress',
-	    value: function renderProgress(progress) {
-	      return progress >= 0 ? _react2.default.createElement('div', { className: this.props.plugin.theme.imageLoader, style: { width: 100 - progress + '%' } }) : null;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _props = this.props;
-	      var alignmentClassName = _props.alignmentClassName;
-	      var focusClassName = _props.focusClassName;
-	      var blockProps = _props.blockProps;
-	      var style = _props.style;
-	
-	      var other = _objectWithoutProperties(_props, ['alignmentClassName', 'focusClassName', 'blockProps', 'style']);
-	
-	      var theme = this.props.plugin.theme;
-	      var _blockProps$entityDat = blockProps.entityData;
-	      var progress = _blockProps$entityDat.progress;
-	      var src = _blockProps$entityDat.src;
-	      var url = _blockProps$entityDat.url;
-	      var alt = _blockProps$entityDat.alt;
-	      var _blockProps$entityDat2 = blockProps.entityData;
-	      var width = _blockProps$entityDat2.width;
-	      var height = _blockProps$entityDat2.height;
-	
-	
-	      if (!width) width = '100%';
-	      if (!height) height = '100%';
-	
-	      return _react2.default.createElement(
-	        'span',
-	        { className: [theme.imageWrapper, alignmentClassName].join(' '),
-	          contentEditable: false,
-	          style: style },
-	        _react2.default.createElement('img', { src: src || url, alt: alt, width: width, height: height,
-	          className: [theme.image, focusClassName].join(' ') }),
-	        this.renderProgress(progress, theme)
-	      );
-	    }
-	  }]);
-	
-	  return ImageRenderer;
-	}(_react.Component);
-	
-	/**
-	 * This class is a toolbar component, to create/update/delete a block
-	 */
-	
-	
-	var InsertImage = function (_Component2) {
-	  _inherits(InsertImage, _Component2);
-	
-	  function InsertImage(props) {
-	    _classCallCheck(this, InsertImage);
-	
-	    var _this2 = _possibleConstructorReturn(this, (InsertImage.__proto__ || Object.getPrototypeOf(InsertImage)).call(this, props));
-	
-	    _this2.onActivate = _this2.onActivate.bind(_this2);
-	    return _this2;
-	  }
-	
-	  _createClass(InsertImage, [{
-	    key: 'onActivate',
-	    value: function onActivate(event) {
-	      event.stopPropagation();
-	      event.preventDefault();
-	
-	      var value = { url: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Humphrey_Bogart_1940.jpg',
-	        width: 527, height: 746, alt: 'Bogey' };
-	
-	      var entityKey = _draftJs.Entity.create('block-image', 'IMMUTABLE', { src: value.url, progress: -1, width: value.width, height: value.height, alt: value.alt });
-	
-	      this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
-	
-	      return false;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'button',
-	        { onClick: this.onActivate },
-	        'Insert Image'
-	      );
-	    }
-	  }]);
-	
-	  return InsertImage;
-	}(_react.Component);
-	
 	/**
 	 * This is our plugin
 	 */
-	
-	
 	var AltImagePlugin = function (_BasePlugin) {
 	  _inherits(AltImagePlugin, _BasePlugin);
 	
 	  function AltImagePlugin(config) {
 	    _classCallCheck(this, AltImagePlugin);
 	
-	    config.uiComponents = [{ component: InsertImage, type: 'block-image' }];
-	    config.renderComponentsDescriptors = [{ component: ImageRenderer, type: 'block-image', outerElement: 'span' }];
+	    config.uiComponents = [{ component: _insertImage.InsertImage, type: 'block-image' }];
+	    config.renderComponentsDescriptors = [{ component: _imageRenderer2.default, type: 'block-image', outerElement: 'span' }];
 	    config.theme = {
 	      imageWrapper: 'imageWrapper',
 	      imageLoader: 'imageLoader',
@@ -67377,12 +67263,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  return AltImagePlugin;
-	}(_index2.default);
+	}(_index.BasePlugin);
 	
 	exports.default = AltImagePlugin;
 
 /***/ },
 /* 712 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.BasePlugin = undefined;
+	
+	var _plugin = __webpack_require__(713);
+	
+	var _plugin2 = _interopRequireDefault(_plugin);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var BasePlugin = exports.BasePlugin = _plugin2.default;
+	exports.default = BasePlugin;
+
+/***/ },
+/* 713 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -67397,19 +67303,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; // eslint-disable-line no-unused-vars
 	
 	
-	var _index = __webpack_require__(713);
+	var _index = __webpack_require__(714);
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _reactDecorate = __webpack_require__(715);
+	var _reactDecorate = __webpack_require__(716);
 	
-	var _loglevel = __webpack_require__(723);
+	var _loglevel = __webpack_require__(724);
 	
 	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
 	var _react = __webpack_require__(463);
 	
-	var _immutable = __webpack_require__(714);
+	var _immutable = __webpack_require__(715);
 	
 	var _immutable2 = _interopRequireDefault(_immutable);
 	
@@ -67557,14 +67463,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = BasePlugin;
 
 /***/ },
-/* 713 */
+/* 714 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _immutable = __webpack_require__(714);
+	var _immutable = __webpack_require__(715);
 	
 	var _immutable2 = _interopRequireDefault(_immutable);
 	
@@ -67618,7 +67524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = BlockUtils;
 
 /***/ },
-/* 714 */
+/* 715 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -72602,16 +72508,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	}));
 
 /***/ },
-/* 715 */
+/* 716 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _composeDecorators = __webpack_require__(716);
+	var _composeDecorators = __webpack_require__(717);
 	
 	var _composeDecorators2 = _interopRequireDefault(_composeDecorators);
 	
-	var _makeDecorator = __webpack_require__(720);
+	var _makeDecorator = __webpack_require__(721);
 	
 	var _makeDecorator2 = _interopRequireDefault(_makeDecorator);
 	
@@ -72623,7 +72529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 716 */
+/* 717 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72633,9 +72539,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = composeDecorators;
 	
-	var _constants = __webpack_require__(717);
+	var _constants = __webpack_require__(718);
 	
-	var _makeDecoratedComponent = __webpack_require__(718);
+	var _makeDecoratedComponent = __webpack_require__(719);
 	
 	var _makeDecoratedComponent2 = _interopRequireDefault(_makeDecoratedComponent);
 	
@@ -72654,7 +72560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 717 */
+/* 718 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72665,7 +72571,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var COMPOSING = exports.COMPOSING = typeof Symbol === 'function' ? Symbol('composing') : '@@react-decorate/composing';
 
 /***/ },
-/* 718 */
+/* 719 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72678,7 +72584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = makeDecoratedComponent;
 	
-	var _fields = __webpack_require__(719);
+	var _fields = __webpack_require__(720);
 	
 	var _react = __webpack_require__(463);
 	
@@ -72740,7 +72646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 719 */
+/* 720 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72829,7 +72735,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 720 */
+/* 721 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72841,17 +72747,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.applyOptionsToDecorator = applyOptionsToDecorator;
 	exports.default = makeDecorator;
 	
-	var _constants = __webpack_require__(717);
+	var _constants = __webpack_require__(718);
 	
-	var _enforceDecorator = __webpack_require__(721);
+	var _enforceDecorator = __webpack_require__(722);
 	
 	var _enforceDecorator2 = _interopRequireDefault(_enforceDecorator);
 	
-	var _invariant = __webpack_require__(722);
+	var _invariant = __webpack_require__(723);
 	
 	var _invariant2 = _interopRequireDefault(_invariant);
 	
-	var _makeDecoratedComponent = __webpack_require__(718);
+	var _makeDecoratedComponent = __webpack_require__(719);
 	
 	var _makeDecoratedComponent2 = _interopRequireDefault(_makeDecoratedComponent);
 	
@@ -72880,7 +72786,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 721 */
+/* 722 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72890,7 +72796,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = enforceDecorator;
 	
-	var _invariant = __webpack_require__(722);
+	var _invariant = __webpack_require__(723);
 	
 	var _invariant2 = _interopRequireDefault(_invariant);
 	
@@ -72914,7 +72820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 722 */
+/* 723 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -72972,7 +72878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(294)))
 
 /***/ },
-/* 723 */
+/* 724 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -73201,7 +73107,163 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 724 */
+/* 725 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// eslint-disable-line no-unused-vars
+	
+	/**
+	 * This class handles how to render a block inside the editor (WYSIWYG)
+	 */
+	var ImageRenderer = function (_Component) {
+	  _inherits(ImageRenderer, _Component);
+	
+	  function ImageRenderer(props) {
+	    _classCallCheck(this, ImageRenderer);
+	
+	    return _possibleConstructorReturn(this, (ImageRenderer.__proto__ || Object.getPrototypeOf(ImageRenderer)).call(this, props));
+	  }
+	
+	  _createClass(ImageRenderer, [{
+	    key: 'renderProgress',
+	    value: function renderProgress(progress) {
+	      return progress >= 0 ? _react2.default.createElement('div', { className: this.props.plugin.theme.imageLoader, style: { width: 100 - progress + '%' } }) : null;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props;
+	      var alignmentClassName = _props.alignmentClassName;
+	      var focusClassName = _props.focusClassName;
+	      var blockProps = _props.blockProps;
+	      var style = _props.style;
+	      var theme = this.props.plugin.theme;
+	      var _blockProps$entityDat = blockProps.entityData;
+	      var progress = _blockProps$entityDat.progress;
+	      var src = _blockProps$entityDat.src;
+	      var url = _blockProps$entityDat.url;
+	      var alt = _blockProps$entityDat.alt;
+	      var _blockProps$entityDat2 = blockProps.entityData;
+	      var width = _blockProps$entityDat2.width;
+	      var height = _blockProps$entityDat2.height;
+	
+	
+	      if (!width) width = '100%';
+	      if (!height) height = '100%';
+	
+	      return _react2.default.createElement(
+	        'span',
+	        { className: [theme.imageWrapper, alignmentClassName].join(' '),
+	          contentEditable: false,
+	          style: style },
+	        _react2.default.createElement('img', { src: src || url, alt: alt, width: width, height: height,
+	          className: [theme.image, focusClassName].join(' ') }),
+	        this.renderProgress(progress, theme)
+	      );
+	    }
+	  }]);
+	
+	  return ImageRenderer;
+	}(_react.Component);
+	
+	exports.default = ImageRenderer;
+
+/***/ },
+/* 726 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.InsertImage = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _draftJs = __webpack_require__(470);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
+	
+	
+	/**
+	 * This class is a toolbar component, to create/update/delete a block
+	 */
+	var InsertImage = exports.InsertImage = function (_React$Component) {
+	  _inherits(InsertImage, _React$Component);
+	
+	  function InsertImage(props) {
+	    _classCallCheck(this, InsertImage);
+	
+	    var _this = _possibleConstructorReturn(this, (InsertImage.__proto__ || Object.getPrototypeOf(InsertImage)).call(this, props));
+	
+	    _this.onActivate = _this.onActivate.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(InsertImage, [{
+	    key: 'onActivate',
+	    value: function onActivate(event) {
+	      event.stopPropagation();
+	      event.preventDefault();
+	
+	      var value = { url: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Humphrey_Bogart_1940.jpg',
+	        width: 527, height: 746, alt: 'Bogey' };
+	
+	      var entityKey = _draftJs.Entity.create('block-image', 'IMMUTABLE', { src: value.url, progress: -1, width: value.width, height: value.height, alt: value.alt });
+	
+	      this.props.plugin.insertBlockReplaceSelection(entityKey, 'block-image');
+	
+	      return false;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.onActivate },
+	        'Insert Image'
+	      );
+	    }
+	  }]);
+	
+	  return InsertImage;
+	}(_react2.default.Component);
+	
+	exports.default = InsertImage;
+
+/***/ },
+/* 727 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -73212,7 +73274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(725);
+	var _rng = __webpack_require__(728);
 	
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -73390,7 +73452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 725 */
+/* 728 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -73428,7 +73490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 726 */
+/* 729 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73441,7 +73503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _removeBlock = __webpack_require__(727);
+	var _removeBlock = __webpack_require__(730);
 	
 	var _removeBlock2 = _interopRequireDefault(_removeBlock);
 	
@@ -73488,7 +73550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = entityPropsPlugin;
 
 /***/ },
-/* 727 */
+/* 730 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
