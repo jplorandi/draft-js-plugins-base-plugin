@@ -67223,8 +67223,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _index = __webpack_require__(712);
@@ -67298,15 +67296,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      return _react2.default.createElement(
 	        'span',
-	        { className: [theme.imageWrapper, alignmentClassName].filter(function (x) {
-	            return x;
-	          }).join(' '),
+	        { className: [theme.imageWrapper, alignmentClassName].join(' '),
 	          contentEditable: false,
 	          style: style },
-	        _react2.default.createElement('img', _extends({}, other, { src: src || url, alt: alt, width: width, height: height,
-	          className: [theme.image, focusClassName].filter(function (x) {
-	            return x;
-	          }).join(' ') })),
+	        _react2.default.createElement('img', { src: src || url, alt: alt, width: width, height: height,
+	          className: [theme.image, focusClassName].join(' ') }),
 	        this.renderProgress(progress, theme)
 	      );
 	    }

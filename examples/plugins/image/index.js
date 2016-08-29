@@ -27,11 +27,11 @@ class ImageRenderer extends Component {
     if (!height) height = '100%';
 
     return (
-      <span className={[theme.imageWrapper, alignmentClassName].filter(x => x).join(' ')}
+      <span className={[theme.imageWrapper, alignmentClassName].join(' ')}
             contentEditable={false}
             style={style}>
-          <img {...other} src={src || url} alt={alt} width={width} height={height}
-               className={[theme.image, focusClassName].filter(x => x).join(' ')}/>
+          <img src={src || url} alt={alt} width={width} height={height}
+               className={[theme.image, focusClassName].join(' ')}/>
           {this.renderProgress(progress, theme)}
       </span>
     );
