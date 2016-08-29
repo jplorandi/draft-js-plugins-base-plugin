@@ -67252,6 +67252,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
 	
 	
+	// eslint-disable-line no-unused-vars
+	
 	/**
 	 * This class handles how to render a block inside the editor (WYSIWYG)
 	 */
@@ -67261,10 +67263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function ImageRenderer(props) {
 	    _classCallCheck(this, ImageRenderer);
 	
-	    var _this = _possibleConstructorReturn(this, (ImageRenderer.__proto__ || Object.getPrototypeOf(ImageRenderer)).call(this, props));
-	
-	    _loglevel2.default.trace('ImageRenderer instanciated, plugin: ', props.plugin);
-	    return _this;
+	    return _possibleConstructorReturn(this, (ImageRenderer.__proto__ || Object.getPrototypeOf(ImageRenderer)).call(this, props));
 	  }
 	
 	  _createClass(ImageRenderer, [{
@@ -67275,7 +67274,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      _loglevel2.default.trace('Inside ImageRenderer render');
 	      var _props = this.props;
 	      var alignmentClassName = _props.alignmentClassName;
 	      var focusClassName = _props.focusClassName;
@@ -67479,19 +67477,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function blockRendererFn(contentBlock) {
 	      var blockType = contentBlock.getType();
 	
-	      // log.trace('blockType: ', blockType);
-	      // log.trace('renderComponentsDescriptors: ', this.renderComponentsDescriptors);
 	      var descriptor = this.renderComponentsDescriptors.filter(function (item) {
 	        if (item.type === blockType) return item;
 	        return null;
 	      });
 	
-	      // log.trace('descriptor: ', descriptor);
-	
 	      if (descriptor[0]) {
 	        var CustomRenderComponent = PluginAsProp(this)(descriptor[0].component);
 	
-	        _loglevel2.default.trace('Returning custom render component: ', CustomRenderComponent);
 	        return {
 	          component: CustomRenderComponent,
 	          editable: false

@@ -1,7 +1,7 @@
 import BasePlugin from '../../../src/index';
 import React, {Component} from 'react'; // eslint-disable-line no-unused-vars
 import {Entity} from 'draft-js';
-import log from 'loglevel';
+import log from 'loglevel'; // eslint-disable-line no-unused-vars
 
 /**
  * This class handles how to render a block inside the editor (WYSIWYG)
@@ -9,7 +9,6 @@ import log from 'loglevel';
 class ImageRenderer extends Component {
   constructor(props) {
     super(props);
-    log.trace('ImageRenderer instanciated, plugin: ', props.plugin);
   }
 
   renderProgress(progress) {
@@ -19,7 +18,6 @@ class ImageRenderer extends Component {
   }
 
   render() {
-    log.trace('Inside ImageRenderer render');
     const {alignmentClassName, focusClassName, blockProps, style, ...other} = this.props;
     const {theme} = this.props.plugin;
     const {progress, src, url, alt} = blockProps.entityData;

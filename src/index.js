@@ -59,19 +59,14 @@ export class BasePlugin {
   blockRendererFn(contentBlock) {
     const blockType = contentBlock.getType();
 
-    // log.trace('blockType: ', blockType);
-    // log.trace('renderComponentsDescriptors: ', this.renderComponentsDescriptors);
     let descriptor = this.renderComponentsDescriptors.filter((item) => {
       if (item.type === blockType) return item;
       return null;
     });
 
-    // log.trace('descriptor: ', descriptor);
-
     if (descriptor[0]) {
       const CustomRenderComponent = PluginAsProp(this)(descriptor[0].component);
 
-      log.trace('Returning custom render component: ', CustomRenderComponent);
       return {
         component: CustomRenderComponent,
         editable: false
