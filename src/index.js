@@ -69,7 +69,7 @@ export class BasePlugin {
     // log.trace('descriptor: ', descriptor);
 
     if (descriptor[0]) {
-      const CustomRenderComponent = descriptor[0].renderComponent;
+      const CustomRenderComponent = PluginAsProp(this)(descriptor[0].component);
 
       log.trace('Returning custom render component: ', CustomRenderComponent);
       return {

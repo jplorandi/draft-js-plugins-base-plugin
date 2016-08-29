@@ -67263,14 +67263,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var _this = _possibleConstructorReturn(this, (ImageRenderer.__proto__ || Object.getPrototypeOf(ImageRenderer)).call(this, props));
 	
-	    _loglevel2.default.trace('ImageRenderer instanciated');
+	    _loglevel2.default.trace('ImageRenderer instanciated, plugin: ', props.plugin);
 	    return _this;
 	  }
 	
 	  _createClass(ImageRenderer, [{
 	    key: 'renderProgress',
 	    value: function renderProgress(progress) {
-	      return progress >= 0 ? _react2.default.createElement('div', { className: this.props.theme.imageLoader, style: { width: 100 - progress + '%' } }) : null;
+	      return progress >= 0 ? _react2.default.createElement('div', { className: this.props.plugin.theme.imageLoader, style: { width: 100 - progress + '%' } }) : null;
 	    }
 	  }, {
 	    key: 'render',
@@ -67284,7 +67284,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var other = _objectWithoutProperties(_props, ['alignmentClassName', 'focusClassName', 'blockProps', 'style']);
 	
-	      var theme = this.props.theme;
+	      var theme = this.props.plugin.theme;
 	      var _blockProps$entityDat = blockProps.entityData;
 	      var progress = _blockProps$entityDat.progress;
 	      var src = _blockProps$entityDat.src;
@@ -67376,6 +67376,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    config.uiComponents = [{ component: InsertImage, type: 'block-image' }];
 	    config.renderComponentsDescriptors = [{ component: ImageRenderer, type: 'block-image', outerElement: 'span' }];
+	    config.theme = {
+	      imageWrapper: 'imageWrapper',
+	      imageLoader: 'imageLoader',
+	      image: 'image'
+	    };
 	    return _possibleConstructorReturn(this, (AltImagePlugin.__proto__ || Object.getPrototypeOf(AltImagePlugin)).call(this, config));
 	  }
 	
@@ -67484,7 +67489,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // log.trace('descriptor: ', descriptor);
 	
 	      if (descriptor[0]) {
-	        var CustomRenderComponent = descriptor[0].renderComponent;
+	        var CustomRenderComponent = PluginAsProp(this)(descriptor[0].component);
 	
 	        _loglevel2.default.trace('Returning custom render component: ', CustomRenderComponent);
 	        return {

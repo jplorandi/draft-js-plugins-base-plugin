@@ -9,19 +9,19 @@ import log from 'loglevel';
 class ImageRenderer extends Component {
   constructor(props) {
     super(props);
-    log.trace('ImageRenderer instanciated');
+    log.trace('ImageRenderer instanciated, plugin: ', props.plugin);
   }
 
   renderProgress(progress) {
     return progress >= 0
-      ? <div className={this.props.theme.imageLoader} style={{width: `${100 - progress}%`}}/>
+      ? <div className={this.props.plugin.theme.imageLoader} style={{width: `${100 - progress}%`}}/>
       : null;
   }
 
   render() {
     log.trace('Inside ImageRenderer render');
     const {alignmentClassName, focusClassName, blockProps, style, ...other} = this.props;
-    const {theme} = this.props;
+    const {theme} = this.props.plugin;
     const {progress, src, url, alt} = blockProps.entityData;
     let {width, height} = blockProps.entityData;
 
@@ -80,6 +80,11 @@ class AltImagePlugin extends BasePlugin {
   constructor(config) {
     config.uiComponents = [{component: InsertImage, type: 'block-image'}];
     config.renderComponentsDescriptors = [{component: ImageRenderer, type: 'block-image', outerElement: 'span'}];
+    config.theme = {
+      imageWrapper: 'imageWrapper',
+      imageLoader: 'imageLoader',
+      image: 'image'
+    };
     super(config);
 
   }
