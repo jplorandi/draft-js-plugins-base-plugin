@@ -3,6 +3,7 @@ import { makeDecorator } from 'react-decorate';
 import log from 'loglevel'; // eslint-disable-line no-unused-vars
 import { PropTypes } from 'react';
 import Immutable from 'immutable';
+import ListenerBus from './listener-bus';
 
 const PluginAsPropFn = (plugin) => {
   return {
@@ -51,9 +52,18 @@ export class BasePlugin {
       getReadOnly: undefined,
       setReadOnly: undefined
     };
+    this.listenerBus = new ListenerBus();
 
     this.toolbarComponents = this.toolbarComponents.bind(this);
     this.blockRendererFn = this.blockRendererFn.bind(this);
+  }
+
+  subscribe(event, callback) {
+    this.listenerBus.subscribe(event, callback);
+  }
+
+  unsubscribe(event, callback) {
+    this.listenerBus.unsubscribe(event, callback);
   }
 
   blockRendererFn(contentBlock) {
@@ -89,18 +99,11 @@ export class BasePlugin {
   }
 
   onChange(editorState) {
-    this.notifyBound(editorState);
+
+    this.store.currentState = editorState;
+    this.listenerBus.fireEvent('onChange', editorState);
 
     return editorState;
-  }
-
-  notifyBound(editorState) {
-    if (this.store.currentState !== editorState) {
-      this.store.currentState = this.store.getEditorState();
-      this.uiComponents.forEach(function (bound) {
-        // bound.notifyUpdate(editorState);
-      });
-    }
   }
 
   toolbarComponents() {

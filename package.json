@@ -20,6 +20,7 @@
   },
   "scripts": {
     "build": "webpack --mode=build",
+    "pub": "webpack --mode=build && webpack --mode=dev && npm publish",
     "dev": "webpack --progress --colors --watch --mode=dev",
     "example-build": "cd examples && webpack --mode=build",
     "example-dev": "cd examples && webpack --progress --colors --watch --mode=dev",

@@ -8196,6 +8196,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// eslint-disable-line no-unused-vars
+	_loglevel2.default.setLevel(_loglevel2.default.levels.TRACE); // eslint-disable-line no-unused-vars
+	
+	
 	function main() {
 	
 	  var editorElement = document.body;
@@ -8205,8 +8208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _reactDom2.default.render(root, editorElement);
 	
 	  _loglevel2.default.info('Editor Started');
-	} // eslint-disable-line no-unused-vars
-	
+	}
 	
 	main();
 	
@@ -29433,7 +29435,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _uuid = __webpack_require__(727);
+	var _index3 = __webpack_require__(728);
+	
+	var _index4 = _interopRequireDefault(_index3);
+	
+	var _uuid = __webpack_require__(740);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
@@ -29441,7 +29447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
-	var _draftJsEntityPropsPlugin = __webpack_require__(729);
+	var _draftJsEntityPropsPlugin = __webpack_require__(742);
 	
 	var _draftJsEntityPropsPlugin2 = _interopRequireDefault(_draftJsEntityPropsPlugin);
 	
@@ -29474,6 +29480,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  theme: imageTheme
 	});
 	
+	var exportPlugin = new _index4.default({ theme: {} });
+	
 	var richButtonsPlugin = (0, _draftJsRichbuttonsPlugin2.default)();
 	// eslint-disable-next-line no-unused-vars
 	var ItalicButton = richButtonsPlugin.ItalicButton;
@@ -29494,7 +29502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var state = _draftJs.ContentState.createFromBlockArray(content);
 	    var editorState = _draftJs.EditorState.createWithContent(state);
 	
-	    _this.plugins = [entityPlugin, richButtonsPlugin, imagePlugin];
+	    _this.plugins = [entityPlugin, richButtonsPlugin, imagePlugin, exportPlugin];
 	
 	    var blockTypes = props.blockTypes;
 	    // eslint-disable-next-line vars-on-top
@@ -29529,11 +29537,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    var toolbarComponents = imagePlugin.toolbarComponents();
+	    var exportToolbarComponents = exportPlugin.toolbarComponents();
 	
 	    _loglevel2.default.trace('Toolbar Components: ', toolbarComponents);
-	    _this.buttons = toolbarComponents.map(function (ToolbarComponent) {
+	    _this.buttons = [];
+	    _this.buttons = _this.buttons.concat(toolbarComponents.map(function (ToolbarComponent) {
 	      return _react2.default.createElement(ToolbarComponent, { key: _uuid2.default.v4() });
-	    });
+	    }));
+	    _this.buttons = _this.buttons.concat(exportToolbarComponents.map(function (ToolbarComponent) {
+	      return _react2.default.createElement(ToolbarComponent, { key: _uuid2.default.v4() });
+	    }));
 	
 	    _this.onChange = _this.onChange.bind(_this);
 	    return _this;
@@ -67228,11 +67241,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _imageRenderer = __webpack_require__(725);
+	var _imageRenderer = __webpack_require__(726);
 	
 	var _imageRenderer2 = _interopRequireDefault(_imageRenderer);
 	
-	var _insertImage = __webpack_require__(726);
+	var _insertImage = __webpack_require__(727);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -67319,6 +67332,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _immutable2 = _interopRequireDefault(_immutable);
 	
+	var _listenerBus = __webpack_require__(725);
+	
+	var _listenerBus2 = _interopRequireDefault(_listenerBus);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -67367,12 +67384,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	      getReadOnly: undefined,
 	      setReadOnly: undefined
 	    };
+	    this.listenerBus = new _listenerBus2.default();
 	
 	    this.toolbarComponents = this.toolbarComponents.bind(this);
 	    this.blockRendererFn = this.blockRendererFn.bind(this);
 	  }
 	
 	  _createClass(BasePlugin, [{
+	    key: 'subscribe',
+	    value: function subscribe(event, callback) {
+	      this.listenerBus.subscribe(event, callback);
+	    }
+	  }, {
+	    key: 'unsubscribe',
+	    value: function unsubscribe(event, callback) {
+	      this.listenerBus.unsubscribe(event, callback);
+	    }
+	  }, {
 	    key: 'blockRendererFn',
 	    value: function blockRendererFn(contentBlock) {
 	      var blockType = contentBlock.getType();
@@ -67410,19 +67438,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onChange',
 	    value: function onChange(editorState) {
-	      this.notifyBound(editorState);
+	
+	      this.store.currentState = editorState;
+	      this.listenerBus.fireEvent('onChange', editorState);
 	
 	      return editorState;
-	    }
-	  }, {
-	    key: 'notifyBound',
-	    value: function notifyBound(editorState) {
-	      if (this.store.currentState !== editorState) {
-	        this.store.currentState = this.store.getEditorState();
-	        this.uiComponents.forEach(function (bound) {
-	          // bound.notifyUpdate(editorState);
-	        });
-	      }
 	    }
 	  }, {
 	    key: 'toolbarComponents',
@@ -73108,6 +73128,62 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 725 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var ListenerBus = exports.ListenerBus = function () {
+	  function ListenerBus() {
+	    _classCallCheck(this, ListenerBus);
+	
+	    this.listeners = [];
+	  }
+	
+	  _createClass(ListenerBus, [{
+	    key: "subscribe",
+	    value: function subscribe(event, callback) {
+	      this.listeners.push({ event: event, callback: callback });
+	    }
+	  }, {
+	    key: "unsubscribe",
+	    value: function unsubscribe(event, callback) {
+	      this.listeners = this.listeners.filter(function (listener) {
+	        if (listener.event !== event && listener.callback !== callback) {
+	          return listener;
+	        }
+	        return null;
+	      });
+	    }
+	  }, {
+	    key: "fireEvent",
+	    value: function fireEvent(name) {
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+	
+	      this.listeners.forEach(function (listener) {
+	        if (listener.event === name) {
+	          listener.callback(args);
+	        }
+	      });
+	    }
+	  }]);
+	
+	  return ListenerBus;
+	}();
+	
+	exports.default = ListenerBus;
+
+/***/ },
+/* 726 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73189,7 +73265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ImageRenderer;
 
 /***/ },
-/* 726 */
+/* 727 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73263,7 +73339,927 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = InsertImage;
 
 /***/ },
-/* 727 */
+/* 728 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _index = __webpack_require__(712);
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _exportButton = __webpack_require__(729);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
+	// import ImageRenderer from './image-renderer';
+	
+	
+	/**
+	 * This is our plugin
+	 */
+	var ExportHtmlPlugin = function (_BasePlugin) {
+	  _inherits(ExportHtmlPlugin, _BasePlugin);
+	
+	  function ExportHtmlPlugin(config) {
+	    _classCallCheck(this, ExportHtmlPlugin);
+	
+	    config.uiComponents = [{ component: _exportButton.SaveButton, type: '' }];
+	    config.renderComponentsDescriptors = [];
+	    config.theme = {};
+	    return _possibleConstructorReturn(this, (ExportHtmlPlugin.__proto__ || Object.getPrototypeOf(ExportHtmlPlugin)).call(this, config));
+	  }
+	
+	  return ExportHtmlPlugin;
+	}(_index.BasePlugin);
+	
+	exports.default = ExportHtmlPlugin;
+
+/***/ },
+/* 729 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.SaveButton = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _draftJsAstExporter = __webpack_require__(730);
+	
+	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
+	
+	var _index = __webpack_require__(739);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
+	
+	
+	/**
+	 * This class is a toolbar component, to create/update/delete a block
+	 */
+	var SaveButton = exports.SaveButton = function (_React$Component) {
+	  _inherits(SaveButton, _React$Component);
+	
+	  function SaveButton(props) {
+	    _classCallCheck(this, SaveButton);
+	
+	    var _this = _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
+	
+	    _this.onActivate = _this.onActivate.bind(_this);
+	    _this.marshaller = new _index.Marshaller([]);
+	    return _this;
+	  }
+	
+	  _createClass(SaveButton, [{
+	    key: 'onActivate',
+	    value: function onActivate(event) {
+	      event.stopPropagation();
+	      event.preventDefault();
+	
+	      var editorState = this.props.plugin.store.getEditorState();
+	      var ast = (0, _draftJsAstExporter2.default)(editorState);
+	
+	      console.log('ast', ast);
+	      console.log('HTML', this.marshaller.convertToHtml(editorState));
+	      alert(this.marshaller.convertToHtml(editorState));
+	
+	      return false;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.onActivate },
+	        'Save HTML'
+	      );
+	    }
+	  }]);
+	
+	  return SaveButton;
+	}(_react2.default.Component);
+	
+	exports.default = SaveButton;
+
+/***/ },
+/* 730 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _processor = __webpack_require__(731);
+	
+	var _processor2 = _interopRequireDefault(_processor);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * Exporter
+	 *
+	 * @param  {EditorState} editorState Draft JS EditorState object
+	 * @param  {Object} options Additional configuration options
+	 * @return {Array} An abstract syntax tree representing the draft-js editorState
+	 */
+	function exporter(editorState) {
+	  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	  // Retrieve the content
+	  var content = editorState.getCurrentContent();
+	  var blocks = content.getBlocksAsArray();
+	  // Convert to an abstract syntax tree
+	  return (0, _processor2.default)(blocks, options);
+	}
+	
+	exports.default = exporter;
+
+/***/ },
+/* 731 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	var _draftJs = __webpack_require__(470);
+	
+	var _draftJsUtils = __webpack_require__(732);
+	
+	var _dataSchema = __webpack_require__(738);
+	
+	var _dataSchema2 = _interopRequireDefault(_dataSchema);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * Process the content of a ContentBlock into appropriate abstract syntax tree
+	 * nodes based on their type
+	 * @param  {ContentBlock} block
+	 * @param  {Object} options.entityModifier Map of functions for modifying entity
+	 * data as it’s exported
+	 * @return {Array} List of block’s child nodes
+	 */
+	function processBlockContent(block, options) {
+	  var entityModifiers = options.entityModifiers || {};
+	  var text = block.getText();
+	
+	  // Cribbed from sstur’s implementation in draft-js-export-html
+	  // https://github.com/sstur/draft-js-export-html/blob/master/src/stateToHTML.js#L222
+	  var charMetaList = block.getCharacterList();
+	  var entityPieces = (0, _draftJsUtils.getEntityRanges)(text, charMetaList);
+	
+	  // Map over the block’s entities
+	  var entities = entityPieces.map(function (_ref) {
+	    var _ref2 = _slicedToArray(_ref, 2);
+	
+	    var entityKey = _ref2[0];
+	    var stylePieces = _ref2[1];
+	
+	    var entity = entityKey ? _draftJs.Entity.get(entityKey) : null;
+	
+	    // Extract the inline element
+	    var inline = stylePieces.map(function (_ref3) {
+	      var _ref4 = _slicedToArray(_ref3, 2);
+	
+	      var text = _ref4[0];
+	      var style = _ref4[1];
+	
+	      return ['inline', [style.toJS().map(function (s) {
+	        return s;
+	      }), text]];
+	    });
+	
+	    // Nest within an entity if there’s data
+	    if (entity) {
+	      var type = entity.getType();
+	      var mutability = entity.getMutability();
+	      var data = entity.getData();
+	
+	      // Run the entity data through a modifier if one exists
+	      var modifier = entityModifiers[type];
+	      if (modifier) {
+	        data = modifier(data);
+	      }
+	
+	      return [['entity', [type, entityKey, mutability, data, inline]]];
+	    } else {
+	      return inline;
+	    }
+	  });
+	  // Flatten the result
+	  return entities.reduce(function (a, b) {
+	    return a.concat(b);
+	  }, []);
+	}
+	
+	/**
+	 * Convert the content from a series of draft-js blocks into an abstract
+	 * syntax tree
+	 * @param  {Array} blocks
+	 * @param  {Object} options
+	 * @return {Array} An abstract syntax tree representing a draft-js content state
+	 */
+	function processBlocks(blocks) {
+	  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	  // Track block context
+	  var context = context || [];
+	  var currentContext = context;
+	  var lastBlock = null;
+	  var lastProcessed = null;
+	  var parents = [];
+	
+	  // Procedurally process individual blocks
+	  blocks.forEach(processBlock);
+	
+	  /**
+	   * Process an individual block
+	   * @param  {ContentBlock} block An individual ContentBlock instance
+	   * @return {Array} A abstract syntax tree node representing a block and its
+	   * children
+	   */
+	  function processBlock(block) {
+	    var type = block.getType();
+	    var key = block.getKey();
+	
+	    var output = ['block', [type, key, processBlockContent(block, options)]];
+	
+	    // Push into context (or not) based on depth. This means either the top-level
+	    // context array, or the `children` of a previous block
+	    // This block is deeper
+	    if (lastBlock && block.getDepth() > lastBlock.getDepth()) {
+	      // Extract reference object from flat context
+	      // parents.push(lastProcessed) // (mutating)
+	      currentContext = lastProcessed[_dataSchema2.default.block.children];
+	    } else if (lastBlock && block.getDepth() < lastBlock.getDepth() && block.getDepth() > 0) {
+	      // This block is shallower (but not at the root). We want to find the last
+	      // block that is one level shallower than this one to append it to
+	      var parent = parents[block.getDepth() - 1];
+	      currentContext = parent[_dataSchema2.default.block.children];
+	    } else if (block.getDepth() === 0) {
+	      // Reset the parent context if we reach the top level
+	      parents = [];
+	      currentContext = context;
+	    }
+	    currentContext.push(output);
+	    lastProcessed = output[1];
+	    // Store a reference to the last block at any given depth
+	    parents[block.getDepth()] = lastProcessed;
+	    lastBlock = block;
+	  }
+	
+	  return context;
+	}
+	
+	exports.default = processBlocks;
+
+/***/ },
+/* 732 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _Constants = __webpack_require__(733);
+	
+	Object.keys(_Constants).forEach(function (key) {
+	  if (key === "default") return;
+	  Object.defineProperty(exports, key, {
+	    enumerable: true,
+	    get: function get() {
+	      return _Constants[key];
+	    }
+	  });
+	});
+	Object.defineProperty(exports, 'Constants', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_Constants).default;
+	  }
+	});
+	
+	var _getEntityRanges = __webpack_require__(734);
+	
+	Object.defineProperty(exports, 'getEntityRanges', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_getEntityRanges).default;
+	  }
+	});
+	
+	var _getSelectedBlocks = __webpack_require__(735);
+	
+	Object.defineProperty(exports, 'getSelectedBlocks', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_getSelectedBlocks).default;
+	  }
+	});
+	
+	var _selectionContainsEntity = __webpack_require__(736);
+	
+	Object.defineProperty(exports, 'selectionContainsEntity', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_selectionContainsEntity).default;
+	  }
+	});
+	
+	var _callModifierForSelectedBlocks = __webpack_require__(737);
+	
+	Object.defineProperty(exports, 'callModifierForSelectedBlocks', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_callModifierForSelectedBlocks).default;
+	  }
+	});
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 733 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var BLOCK_TYPE = exports.BLOCK_TYPE = {
+	  // This is used to represent a normal text block (paragraph).
+	  UNSTYLED: 'unstyled',
+	  HEADER_ONE: 'header-one',
+	  HEADER_TWO: 'header-two',
+	  HEADER_THREE: 'header-three',
+	  HEADER_FOUR: 'header-four',
+	  HEADER_FIVE: 'header-five',
+	  HEADER_SIX: 'header-six',
+	  UNORDERED_LIST_ITEM: 'unordered-list-item',
+	  ORDERED_LIST_ITEM: 'ordered-list-item',
+	  BLOCKQUOTE: 'blockquote',
+	  PULLQUOTE: 'pullquote',
+	  CODE: 'code-block',
+	  ATOMIC: 'atomic'
+	};
+	
+	var ENTITY_TYPE = exports.ENTITY_TYPE = {
+	  LINK: 'LINK',
+	  IMAGE: 'IMAGE'
+	};
+	
+	var INLINE_STYLE = exports.INLINE_STYLE = {
+	  BOLD: 'BOLD',
+	  CODE: 'CODE',
+	  ITALIC: 'ITALIC',
+	  STRIKETHROUGH: 'STRIKETHROUGH',
+	  UNDERLINE: 'UNDERLINE'
+	};
+	
+	exports.default = {
+	  BLOCK_TYPE: BLOCK_TYPE,
+	  ENTITY_TYPE: ENTITY_TYPE,
+	  INLINE_STYLE: INLINE_STYLE
+	};
+
+/***/ },
+/* 734 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.EMPTY_SET = undefined;
+	exports.default = getEntityRanges;
+	
+	var _immutable = __webpack_require__(715);
+	
+	var EMPTY_SET = exports.EMPTY_SET = new _immutable.OrderedSet();
+	
+	function getEntityRanges(text, charMetaList) {
+	  var charEntity = null;
+	  var prevCharEntity = null;
+	  var ranges = [];
+	  var rangeStart = 0;
+	  for (var i = 0, len = text.length; i < len; i++) {
+	    prevCharEntity = charEntity;
+	    var meta = charMetaList.get(i);
+	    charEntity = meta ? meta.getEntity() : null;
+	    if (i > 0 && charEntity !== prevCharEntity) {
+	      ranges.push([prevCharEntity, getStyleRanges(text.slice(rangeStart, i), charMetaList.slice(rangeStart, i))]);
+	      rangeStart = i;
+	    }
+	  }
+	  ranges.push([charEntity, getStyleRanges(text.slice(rangeStart), charMetaList.slice(rangeStart))]);
+	  return ranges;
+	}
+	
+	function getStyleRanges(text, charMetaList) {
+	  var charStyle = EMPTY_SET;
+	  var prevCharStyle = EMPTY_SET;
+	  var ranges = [];
+	  var rangeStart = 0;
+	  for (var i = 0, len = text.length; i < len; i++) {
+	    prevCharStyle = charStyle;
+	    var meta = charMetaList.get(i);
+	    charStyle = meta ? meta.getStyle() : EMPTY_SET;
+	    if (i > 0 && !(0, _immutable.is)(charStyle, prevCharStyle)) {
+	      ranges.push([text.slice(rangeStart, i), prevCharStyle]);
+	      rangeStart = i;
+	    }
+	  }
+	  ranges.push([text.slice(rangeStart), charStyle]);
+	  return ranges;
+	}
+
+/***/ },
+/* 735 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * Returns an array of all `ContentBlock` instances within two block keys
+	 *
+	 * @param  {object} contentState A draft.js `ContentState` instance
+	 * @param  {string} anchorKey    The block key to start searching from
+	 * @param  {string} focusKey     The block key until which to search
+	 *
+	 * @return {array} An array containing the found content blocks
+	 */
+	
+	exports.default = function (contentState, anchorKey, focusKey) {
+	  var isSameBlock = anchorKey === focusKey;
+	  var startingBlock = contentState.getBlockForKey(anchorKey);
+	
+	  if (!startingBlock) {
+	    return [];
+	  }
+	
+	  var selectedBlocks = [startingBlock];
+	
+	  if (!isSameBlock) {
+	    var blockKey = anchorKey;
+	
+	    while (blockKey !== focusKey) {
+	      var nextBlock = contentState.getBlockAfter(blockKey);
+	
+	      if (!nextBlock) {
+	        selectedBlocks = [];
+	        break;
+	      }
+	
+	      selectedBlocks.push(nextBlock);
+	      blockKey = nextBlock.getKey();
+	    }
+	  }
+	
+	  return selectedBlocks;
+	};
+
+/***/ },
+/* 736 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _getSelectedBlocks = __webpack_require__(735);
+	
+	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (strategy) {
+	  return function (editorState, selection) {
+	    var contentState = editorState.getCurrentContent();
+	    var currentSelection = selection || editorState.getSelection();
+	    var startKey = currentSelection.getStartKey();
+	    var endKey = currentSelection.getEndKey();
+	    var startOffset = currentSelection.getStartOffset();
+	    var endOffset = currentSelection.getEndOffset();
+	
+	    var isSameBlock = startKey === endKey;
+	    var selectedBlocks = (0, _getSelectedBlocks2.default)(contentState, startKey, endKey);
+	    var entityFound = false;
+	
+	    // We have to shift the offset to not get false positives when selecting
+	    // a character just before or after an entity
+	    var finalStartOffset = startOffset + 1;
+	    var finalEndOffset = endOffset - 1;
+	
+	    selectedBlocks.forEach(function (block) {
+	      strategy(block, function (start, end) {
+	        if (entityFound) {
+	          return;
+	        }
+	
+	        var blockKey = block.getKey();
+	
+	        if (isSameBlock && (end < finalStartOffset || start > finalEndOffset)) {
+	          return;
+	        } else if (blockKey === startKey && end < finalStartOffset) {
+	          return;
+	        } else if (blockKey === endKey && start > finalEndOffset) {
+	          return;
+	        }
+	
+	        entityFound = true;
+	      });
+	    });
+	
+	    return entityFound;
+	  };
+	};
+
+/***/ },
+/* 737 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _draftJs = __webpack_require__(470);
+	
+	var _getSelectedBlocks = __webpack_require__(735);
+	
+	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * Calls a provided `modifier` function with a selection for each
+	 * selected block in the current editor selection. Passes through additional
+	 * arguments to the modifier.
+	 *
+	 * Note: At the moment it will retain the original selection and override
+	 * possible selection changes from modifiers
+	 *
+	 * @param  {object} editorState The current draft.js editor state object
+	 *
+	 * @param  {function} modifier  A modifier function to be executed.
+	 *                              Must have the signature (editorState, selection, ...)
+	 *
+	 * @param  {mixed} ...args      Additional arguments to be passed through to the modifier
+	 *
+	 * @return {object} The new editor state
+	 */
+	
+	exports.default = function (editorState, modifier) {
+	  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	    args[_key - 2] = arguments[_key];
+	  }
+	
+	  var contentState = editorState.getCurrentContent();
+	  var currentSelection = editorState.getSelection();
+	
+	  var startKey = currentSelection.getStartKey();
+	  var endKey = currentSelection.getEndKey();
+	  var startOffset = currentSelection.getStartOffset();
+	  var endOffset = currentSelection.getEndOffset();
+	
+	  var isSameBlock = startKey === endKey;
+	  var selectedBlocks = (0, _getSelectedBlocks2.default)(contentState, startKey, endKey);
+	
+	  var finalEditorState = editorState;
+	  selectedBlocks.forEach(function (block) {
+	    var currentBlockKey = block.getKey();
+	    var selectionStart = startOffset;
+	    var selectionEnd = endOffset;
+	
+	    if (currentBlockKey === startKey) {
+	      selectionStart = startOffset;
+	      selectionEnd = isSameBlock ? endOffset : block.getText().length;
+	    } else if (currentBlockKey === endKey) {
+	      selectionStart = isSameBlock ? startOffset : 0;
+	      selectionEnd = endOffset;
+	    } else {
+	      selectionStart = 0;
+	      selectionEnd = block.getText().length;
+	    }
+	
+	    var selection = new _draftJs.SelectionState({
+	      anchorKey: currentBlockKey,
+	      anchorOffset: selectionStart,
+	      focusKey: currentBlockKey,
+	      focusOffset: selectionEnd
+	    });
+	
+	    finalEditorState = modifier.apply(undefined, [finalEditorState, selection].concat(args));
+	  });
+	
+	  return _draftJs.EditorState.forceSelection(finalEditorState, currentSelection);
+	};
+
+/***/ },
+/* 738 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * A schema for mapping named keys for each type of object in the AST to their
+	 * relevant index. So we can know what we're talking about when we pull data
+	 * out of what are not-easy-for-humans data structure.
+	 * @type {Object}
+	 */
+	var schemaMapping = {
+	  block: {
+	    type: 0,
+	    key: 1,
+	    children: 2
+	  },
+	  inline: {
+	    styles: 0,
+	    text: 1
+	  },
+	  entity: {
+	    type: 0,
+	    key: 1,
+	    mutability: 2,
+	    data: 3,
+	    children: 4
+	  }
+	};
+	
+	exports.default = schemaMapping;
+
+/***/ },
+/* 739 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Marshaller = exports.SerializerStrategy = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	// import {ContentState, EditorState} from 'draft-js';
+	
+	
+	var _draftJsAstExporter = __webpack_require__(730);
+	
+	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
+	
+	var _loglevel = __webpack_require__(724);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	// eslint-disable-line no-unused-vars
+	
+	var SerializerStrategy = exports.SerializerStrategy = function () {
+	  function SerializerStrategy() {
+	    _classCallCheck(this, SerializerStrategy);
+	  }
+	
+	  _createClass(SerializerStrategy, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {}
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {}
+	  }, {
+	    key: 'deserialize',
+	    value: function deserialize(text) {}
+	  }]);
+	
+	  return SerializerStrategy;
+	}();
+	
+	var BlockSerializer = function (_SerializerStrategy) {
+	  _inherits(BlockSerializer, _SerializerStrategy);
+	
+	  function BlockSerializer() {
+	    _classCallCheck(this, BlockSerializer);
+	
+	    return _possibleConstructorReturn(this, (BlockSerializer.__proto__ || Object.getPrototypeOf(BlockSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(BlockSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'block') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['<div>', astNode[astNode.length - 1], '</div>'];
+	    }
+	  }]);
+	
+	  return BlockSerializer;
+	}(SerializerStrategy);
+	
+	var NilSerializer = function (_SerializerStrategy2) {
+	  _inherits(NilSerializer, _SerializerStrategy2);
+	
+	  function NilSerializer() {
+	    _classCallCheck(this, NilSerializer);
+	
+	    return _possibleConstructorReturn(this, (NilSerializer.__proto__ || Object.getPrototypeOf(NilSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(NilSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (Array.isArray(astNode[0])) {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['', astNode[0], ''];
+	    }
+	  }]);
+	
+	  return NilSerializer;
+	}(SerializerStrategy);
+	
+	var InlineSerializer = function (_SerializerStrategy3) {
+	  _inherits(InlineSerializer, _SerializerStrategy3);
+	
+	  function InlineSerializer() {
+	    _classCallCheck(this, InlineSerializer);
+	
+	    return _possibleConstructorReturn(this, (InlineSerializer.__proto__ || Object.getPrototypeOf(InlineSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(InlineSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'inline') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return [astNode[1][1], null, ''];
+	    }
+	  }]);
+	
+	  return InlineSerializer;
+	}(SerializerStrategy);
+	
+	var SpanSerializer = function (_SerializerStrategy4) {
+	  _inherits(SpanSerializer, _SerializerStrategy4);
+	
+	  function SpanSerializer() {
+	    _classCallCheck(this, SpanSerializer);
+	
+	    return _possibleConstructorReturn(this, (SpanSerializer.__proto__ || Object.getPrototypeOf(SpanSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(SpanSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'unstyled') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['<span>', astNode[astNode.length - 1], '</span>'];
+	    }
+	  }]);
+	
+	  return SpanSerializer;
+	}(SerializerStrategy);
+	
+	var Marshaller = exports.Marshaller = function () {
+	  function Marshaller(serializers) {
+	    _classCallCheck(this, Marshaller);
+	
+	    this.serializers = [new BlockSerializer(), new SpanSerializer(), new NilSerializer(), new InlineSerializer()].concat(serializers);
+	  }
+	
+	  _createClass(Marshaller, [{
+	    key: 'convertToHtml',
+	    value: function convertToHtml(editorState) {
+	      var output = [];
+	      var ast = (0, _draftJsAstExporter2.default)(editorState);
+	      var stack = [{ depth: 0, element: ast }];
+	      var outputOffset = 0;
+	      var current, serialized, element, strategy;
+	      var depth;
+	
+	      while (stack.length) {
+	        current = stack.pop();
+	        _loglevel2.default.trace('Current: ', current);
+	
+	        depth = current.depth;
+	        element = current.element;
+	        strategy = this.findStrategy(element);
+	
+	        if (strategy) {
+	          // log.trace('Strategy found for element: ', strategy);
+	
+	          serialized = strategy.serialize(element);
+	          output.splice(outputOffset++, 0, serialized[0]);
+	          output.splice(outputOffset, 0, serialized[2]);
+	          // outputOffset--;
+	          stack.push({ depth: depth + 1, element: serialized[1] });
+	        } else {
+	          _loglevel2.default.trace('No strategy found for element: ', element);
+	        }
+	      }
+	
+	      return output.join(' ');
+	    }
+	  }, {
+	    key: 'findStrategy',
+	    value: function findStrategy(element) {
+	      if (element == null) {
+	        return null;
+	      }
+	
+	      return this.serializers.reduce(function (previous, serializer) {
+	        // log.trace('findStrat: ', previous, serializer);
+	        if (previous) {
+	          return previous;
+	        }
+	
+	        if (serializer.isValid(element)) {
+	          return serializer;
+	        }
+	
+	        return null;
+	      }, null);
+	    }
+	  }]);
+	
+	  return Marshaller;
+	}();
+	
+	exports.default = Marshaller;
+
+/***/ },
+/* 740 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -73274,7 +74270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(728);
+	var _rng = __webpack_require__(741);
 	
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -73452,7 +74448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 728 */
+/* 741 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -73490,7 +74486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 729 */
+/* 742 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73503,7 +74499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _removeBlock = __webpack_require__(730);
+	var _removeBlock = __webpack_require__(743);
 	
 	var _removeBlock2 = _interopRequireDefault(_removeBlock);
 	
@@ -73550,7 +74546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = entityPropsPlugin;
 
 /***/ },
-/* 730 */
+/* 743 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

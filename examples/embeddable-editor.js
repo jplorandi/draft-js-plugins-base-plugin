@@ -7,7 +7,10 @@ import DraftPasteProcessor from 'draft-js/lib/DraftPasteProcessor';
 import createRichButtonsPlugin from 'draft-js-richbuttons-plugin';
 import Editor from 'draft-js-plugins-editor'; // eslint-disable-line no-unused-vars
 import {EditorState, ContentState} from 'draft-js';
+
 import AltImagePlugin from './plugins/image/index';
+import ExportHtmlPlugin from './plugins/export-html/index';
+
 import uuid from 'uuid';
 import log from 'loglevel';
 
@@ -27,6 +30,8 @@ const imagePlugin = new AltImagePlugin({
   theme: imageTheme
 });
 
+const exportPlugin = new ExportHtmlPlugin({ theme: {}});
+
 const richButtonsPlugin = createRichButtonsPlugin();
 // eslint-disable-next-line no-unused-vars
 const { ItalicButton, BoldButton, MonospaceButton, UnderlineButton } = richButtonsPlugin;
@@ -39,7 +44,7 @@ class EmbeddableEditor extends Component {
     const state = ContentState.createFromBlockArray(content);
     let editorState = EditorState.createWithContent(state);
 
-    this.plugins = [entityPlugin, richButtonsPlugin, imagePlugin];
+    this.plugins = [entityPlugin, richButtonsPlugin, imagePlugin, exportPlugin];
 
     const { blockTypes } = props;
     // eslint-disable-next-line vars-on-top
@@ -73,9 +78,14 @@ class EmbeddableEditor extends Component {
     };
 
     const toolbarComponents = imagePlugin.toolbarComponents();
+    const exportToolbarComponents = exportPlugin.toolbarComponents();
 
     log.trace('Toolbar Components: ', toolbarComponents);
-    this.buttons = toolbarComponents.map((ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />);
+    this.buttons = [];
+    this.buttons = this.buttons.concat(toolbarComponents.map(
+      (ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />));
+    this.buttons = this.buttons.concat(exportToolbarComponents.map(
+      (ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />));
 
     this.onChange = this.onChange.bind(this);
   }
