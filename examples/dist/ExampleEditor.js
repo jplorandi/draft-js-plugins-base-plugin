@@ -73443,7 +73443,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var editorState = this.props.plugin.store.getEditorState();
 	      var ast = (0, _draftJsAstExporter2.default)(editorState);
 	
-	      console.log('ast', ast);
+	      // console.log('ast', ast);
+	      console.log(JSON.stringify(ast));
 	      console.log('HTML', this.marshaller.convertToHtml(editorState));
 	      alert(this.marshaller.convertToHtml(editorState));
 	
@@ -74143,7 +74144,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function InlineSerializer() {
 	    _classCallCheck(this, InlineSerializer);
 	
-	    return _possibleConstructorReturn(this, (InlineSerializer.__proto__ || Object.getPrototypeOf(InlineSerializer)).apply(this, arguments));
+	    var _this3 = _possibleConstructorReturn(this, (InlineSerializer.__proto__ || Object.getPrototypeOf(InlineSerializer)).call(this));
+	
+	    _this3.styles = [{ draft: 'BOLD', html: 'strong' }, { draft: 'ITALIC', html: 'i' }, { draft: 'UNDERLINE', html: 'u' }, { draft: 'CODE', html: 'code' }];
+	
+	    return _this3;
 	  }
 	
 	  _createClass(InlineSerializer, [{
@@ -74155,8 +74160,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return false;
 	    }
 	  }, {
+	    key: 'findStyles',
+	    value: function findStyles(style) {
+	      var rval = void 0;
+	      var tmp = void 0;
+	
+	      _loglevel2.default.trace('finding style for: ', style);
+	      rval = this.styles.filter(function (knownStyle) {
+	        tmp = false;
+	        style.forEach(function (s) {
+	          if (knownStyle.draft === s) {
+	            tmp = true;
+	          }
+	        });
+	        return tmp;
+	      });
+	      _loglevel2.default.trace('found styles: ', rval);
+	
+	      return rval;
+	    }
+	  }, {
 	    key: 'serialize',
 	    value: function serialize(astNode) {
+	      var style = this.findStyles(astNode[1][0]);
+	      var rval = [];
+	      var index = 0;
+	
+	      if (style.length) {
+	        _loglevel2.default.trace('style: ', style);
+	        style.forEach(function (item) {
+	          rval.splice(index++, 0, '<' + item.html + '>');
+	          rval.splice(index, 0, '</' + item.html + '>');
+	        });
+	        rval.splice(index, 0, astNode[1][1]);
+	        return [rval.join(''), null, ''];
+	      }
+	
 	      return [astNode[1][1], null, ''];
 	    }
 	  }]);
@@ -74184,7 +74223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'serialize',
 	    value: function serialize(astNode) {
-	      return ['<span>', astNode[astNode.length - 1], '</span>'];
+	      return ['<span>', astNode[astNode.length - 1], '</span>', true];
 	    }
 	  }]);
 	
@@ -74222,14 +74261,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	          serialized = strategy.serialize(element);
 	          output.splice(outputOffset++, 0, serialized[0]);
 	          output.splice(outputOffset, 0, serialized[2]);
-	          // outputOffset--;
-	          stack.push({ depth: depth + 1, element: serialized[1] });
+	          if (serialized[3]) {
+	            serialized[1].reverse().forEach(function (item) {
+	              stack.push({ depth: depth + 1, element: item });
+	            });
+	          } else {
+	            stack.push({ depth: depth + 1, element: serialized[1] });
+	          }
 	        } else {
 	          _loglevel2.default.trace('No strategy found for element: ', element);
 	        }
 	      }
 	
-	      return output.join(' ');
+	      return output.join('');
 	    }
 	  }, {
 	    key: 'findStrategy',

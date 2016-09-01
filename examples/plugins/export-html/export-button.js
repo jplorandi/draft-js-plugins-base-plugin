@@ -20,7 +20,8 @@ export class SaveButton extends React.Component {
     const editorState = this.props.plugin.store.getEditorState();
     const ast = exporter(editorState);
 
-    console.log('ast', ast);
+    // console.log('ast', ast);
+    console.log(JSON.stringify(ast));
     console.log('HTML', this.marshaller.convertToHtml(editorState));
     alert(this.marshaller.convertToHtml(editorState));
 

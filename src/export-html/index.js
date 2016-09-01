@@ -43,6 +43,17 @@ class NilSerializer extends SerializerStrategy {
 }
 
 class InlineSerializer extends SerializerStrategy {
+  constructor() {
+    super();
+    this.styles = [
+      {draft: 'BOLD', html: 'strong'},
+      {draft: 'ITALIC', html: 'i'},
+      {draft: 'UNDERLINE', html: 'u'},
+      {draft: 'CODE', html: 'code'}
+    ];
+
+  }
+
   isValid(astNode) {
     if (typeof astNode[0] === 'string' && astNode[0] === 'inline') {
       return true;
@@ -50,8 +61,42 @@ class InlineSerializer extends SerializerStrategy {
     return false;
   }
 
+  findStyles(style) {
+    let rval;
+    let tmp;
+
+    log.trace('finding style for: ', style);
+    rval = this.styles.filter((knownStyle) => {
+      tmp = false;
+      style.forEach((s) => {
+        if (knownStyle.draft === s) {
+          tmp = true;
+        }
+      });
+      return tmp;
+    });
+    log.trace('found styles: ', rval);
+
+    return rval;
+  }
+
   serialize(astNode) {
+    const style = this.findStyles(astNode[1][0]);
+    let rval = [];
+    let index = 0;
+
+    if (style.length) {
+      log.trace('style: ', style);
+      style.forEach((item) => {
+        rval.splice(index++, 0, '<' + item.html + '>');
+        rval.splice(index, 0, '</' + item.html + '>');
+      });
+      rval.splice(index, 0, astNode[1][1]);
+      return [rval.join(''), null, ''];
+    }
+
     return [astNode[1][1], null, ''];
+
   }
 }
 
@@ -64,7 +109,7 @@ class SpanSerializer extends SerializerStrategy {
   }
 
   serialize(astNode) {
-    return ['<span>', astNode[astNode.length - 1], '</span>'];
+    return ['<span>', astNode[astNode.length - 1], '</span>', true];
   }
 }
 
@@ -96,14 +141,20 @@ export class Marshaller {
         serialized = strategy.serialize(element);
         output.splice(outputOffset++, 0, serialized[0]);
         output.splice(outputOffset, 0, serialized[2]);
-        // outputOffset--;
-        stack.push({depth: depth + 1, element: serialized[1]});
+        if (serialized[3]) {
+          serialized[1].reverse().forEach((item) => {
+            stack.push({depth: depth + 1, element: item});
+          });
+
+        } else {
+          stack.push({depth: depth + 1, element: serialized[1]});
+        }
       } else {
         log.trace('No strategy found for element: ', element);
       }
     }
 
-    return output.join(' ');
+    return output.join('');
   }
 
   findStrategy(element) {
