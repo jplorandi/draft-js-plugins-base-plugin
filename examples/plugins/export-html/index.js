@@ -9,11 +9,14 @@ import { SaveButton } from './export-button';
 class ExportHtmlPlugin extends BasePlugin {
   constructor(config) {
     config.uiComponents = [{component: SaveButton, type: ''}];
-    config.renderComponentsDescriptors = [];
     config.theme = {
     };
     super(config);
 
+  }
+
+  setMarshaller(marshaller) {
+    this.marshaller = marshaller;
   }
 }
 

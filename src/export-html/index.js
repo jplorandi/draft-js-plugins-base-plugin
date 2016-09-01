@@ -29,7 +29,7 @@ class BlockSerializer extends SerializerStrategy {
   }
 }
 
-class NilSerializer extends SerializerStrategy {
+class BranchSerializer extends SerializerStrategy {
   isValid(astNode) {
     if (Array.isArray(astNode[0])) {
       return true;
@@ -38,7 +38,7 @@ class NilSerializer extends SerializerStrategy {
   }
 
   serialize(astNode) {
-    return ['', astNode[0], ''];
+    return ['<div class="branch">', astNode, '</div>', true];
   }
 }
 
@@ -47,9 +47,9 @@ class InlineSerializer extends SerializerStrategy {
     super();
     this.styles = [
       {draft: 'BOLD', html: 'strong'},
-      {draft: 'ITALIC', html: 'i'},
-      {draft: 'UNDERLINE', html: 'u'},
-      {draft: 'CODE', html: 'code'}
+      {draft: 'ITALIC', html: 'italic'},
+      {draft: 'UNDERLINE', html: 'underline'},
+      {draft: 'CODE', html: 'monospace'}
     ];
 
   }
@@ -80,22 +80,41 @@ class InlineSerializer extends SerializerStrategy {
     return rval;
   }
 
+  // serialize(astNode) {
+  //   const style = this.findStyles(astNode[1][0]);
+  //   let rval = [];
+  //   let index = 0;
+  //
+  //   if (style.length) {
+  //     log.trace('style: ', style);
+  //     style.forEach((item) => {
+  //       rval.splice(index++, 0, '<' + item.html + '>');
+  //       rval.splice(index, 0, '</' + item.html + '>');
+  //     });
+  //     rval.splice(index, 0, astNode[1][1]);
+  //     return [rval.join(''), null, ''];
+  //   }
+  //
+  //   return [astNode[1][1], null, ''];
+  //
+  // }
+
   serialize(astNode) {
     const style = this.findStyles(astNode[1][0]);
-    let rval = [];
-    let index = 0;
+    let styles = [];
 
     if (style.length) {
       log.trace('style: ', style);
       style.forEach((item) => {
-        rval.splice(index++, 0, '<' + item.html + '>');
-        rval.splice(index, 0, '</' + item.html + '>');
+        styles.push(item.html);
+        // rval.splice(index++, 0, '<' + item.html + '>');
+        // rval.splice(index, 0, '</' + item.html + '>');
       });
-      rval.splice(index, 0, astNode[1][1]);
-      return [rval.join(''), null, ''];
+      // rval.splice(index, 0, astNode[1][1]);
+      return ['<span class="' + styles.join(' ') + '">', null, '</span>'];
     }
 
-    return [astNode[1][1], null, ''];
+    return ['<span>' + astNode[1][1], null, '</span>'];
 
   }
 }
@@ -109,14 +128,14 @@ class SpanSerializer extends SerializerStrategy {
   }
 
   serialize(astNode) {
-    return ['<span>', astNode[astNode.length - 1], '</span>', true];
+    return ['<p>', astNode[astNode.length - 1], '</p>', true];
   }
 }
 
 export class Marshaller {
   constructor(serializers) {
-    this.serializers = [new BlockSerializer(), new SpanSerializer(),
-      new NilSerializer(), new InlineSerializer()].concat(serializers);
+    this.serializers = [new BlockSerializer(), new SpanSerializer(), new InlineSerializer(),
+      new BranchSerializer() ].concat(serializers);
   }
 
   convertToHtml(editorState) {
@@ -129,6 +148,7 @@ export class Marshaller {
 
     while (stack.length) {
       current = stack.pop();
+      log.trace('stack size: ', stack.length);
       log.trace('Current: ', current);
 
       depth = current.depth;
@@ -136,7 +156,7 @@ export class Marshaller {
       strategy = this.findStrategy(element);
 
       if (strategy) {
-        // log.trace('Strategy found for element: ', strategy);
+        log.trace('Strategy found for element: ', strategy);
 
         serialized = strategy.serialize(element);
         output.splice(outputOffset++, 0, serialized[0]);
@@ -149,6 +169,7 @@ export class Marshaller {
         } else {
           stack.push({depth: depth + 1, element: serialized[1]});
         }
+        log.trace('post stack size: ', stack.length);
       } else {
         log.trace('No strategy found for element: ', element);
       }

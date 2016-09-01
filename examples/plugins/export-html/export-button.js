@@ -1,6 +1,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import exporter from 'draft-js-ast-exporter';
-import {Marshaller} from '../../../src/export-html/index';
+
+import log from 'loglevel';
 
 /**
  * This class is a toolbar component, to create/update/delete a block
@@ -10,7 +11,7 @@ export class SaveButton extends React.Component {
     super(props);
 
     this.onActivate = this.onActivate.bind(this);
-    this.marshaller = new Marshaller([]);
+    // this.marshaller = new Marshaller([]);
   }
 
   onActivate(event) {
@@ -21,9 +22,9 @@ export class SaveButton extends React.Component {
     const ast = exporter(editorState);
 
     // console.log('ast', ast);
-    console.log(JSON.stringify(ast));
-    console.log('HTML', this.marshaller.convertToHtml(editorState));
-    alert(this.marshaller.convertToHtml(editorState));
+    log.trace(JSON.stringify(ast));
+    log.trace('HTML', this.props.plugin.marshaller.convertToHtml(editorState));
+    // alert(this.props.plugin.marshaller.convertToHtml(editorState));
 
     return false;
   }
@@ -36,4 +37,3 @@ export class SaveButton extends React.Component {
 }
 
 export default SaveButton;
-

@@ -44,6 +44,7 @@ export class BasePlugin {
     this.uiComponents = config.uiComponents || [];
     this.disableRenderMap = config.disableRenderMap || false;
     this.renderComponentsDescriptors = config.renderComponentsDescriptors || [];
+    this.serializers = config.serializers || [];
     this.theme = config.theme || {};
     this.store = {
       currentState: undefined,
@@ -110,9 +111,7 @@ export class BasePlugin {
     var self = this;
 
     return this.uiComponents.map(function (uiComponent) {
-      const decorated = PluginAsProp(self)(uiComponent.component);
-
-      return decorated;
+      return PluginAsProp(self)(uiComponent.component);
     });
   }
 

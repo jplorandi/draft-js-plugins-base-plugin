@@ -29435,11 +29435,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _index3 = __webpack_require__(728);
+	var _index3 = __webpack_require__(730);
 	
 	var _index4 = _interopRequireDefault(_index3);
 	
-	var _uuid = __webpack_require__(740);
+	var _uuid = __webpack_require__(741);
 	
 	var _uuid2 = _interopRequireDefault(_uuid);
 	
@@ -29447,11 +29447,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
-	var _draftJsEntityPropsPlugin = __webpack_require__(742);
+	var _draftJsEntityPropsPlugin = __webpack_require__(743);
 	
 	var _draftJsEntityPropsPlugin2 = _interopRequireDefault(_draftJsEntityPropsPlugin);
 	
 	var _immutable = __webpack_require__(715);
+	
+	var _exportHtml = __webpack_require__(729);
+	
+	var _exportHtml2 = _interopRequireDefault(_exportHtml);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -29547,6 +29551,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this.buttons = _this.buttons.concat(exportToolbarComponents.map(function (ToolbarComponent) {
 	      return _react2.default.createElement(ToolbarComponent, { key: _uuid2.default.v4() });
 	    }));
+	
+	    _this.marshaller = new _exportHtml2.default(imagePlugin.serializers);
+	    exportPlugin.setMarshaller(_this.marshaller);
 	
 	    _this.onChange = _this.onChange.bind(_this);
 	    return _this;
@@ -67247,6 +67254,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _insertImage = __webpack_require__(727);
 	
+	var _insertImage2 = _interopRequireDefault(_insertImage);
+	
+	var _imageSerializer = __webpack_require__(728);
+	
+	var _imageSerializer2 = _interopRequireDefault(_imageSerializer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -67254,7 +67267,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
-	
 	
 	/**
 	 * This is our plugin
@@ -67265,8 +67277,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function AltImagePlugin(config) {
 	    _classCallCheck(this, AltImagePlugin);
 	
-	    config.uiComponents = [{ component: _insertImage.InsertImage, type: 'block-image' }];
+	    config.uiComponents = [{ component: _insertImage2.default, type: 'block-image' }];
 	    config.renderComponentsDescriptors = [{ component: _imageRenderer2.default, type: 'block-image', outerElement: 'span' }];
+	    config.serializers = [new _imageSerializer2.default()];
 	    config.theme = {
 	      imageWrapper: 'imageWrapper',
 	      imageLoader: 'imageLoader',
@@ -67376,6 +67389,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.uiComponents = config.uiComponents || [];
 	    this.disableRenderMap = config.disableRenderMap || false;
 	    this.renderComponentsDescriptors = config.renderComponentsDescriptors || [];
+	    this.serializers = config.serializers || [];
 	    this.theme = config.theme || {};
 	    this.store = {
 	      currentState: undefined,
@@ -67450,9 +67464,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var self = this;
 	
 	      return this.uiComponents.map(function (uiComponent) {
-	        var decorated = PluginAsProp(self)(uiComponent.component);
-	
-	        return decorated;
+	        return PluginAsProp(self)(uiComponent.component);
 	      });
 	    }
 	  }, {
@@ -73347,6 +73359,360 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.ImageSerializer = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _index = __webpack_require__(729);
+	
+	var _loglevel = __webpack_require__(724);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ImageSerializer = exports.ImageSerializer = function (_SerializerStrategy) {
+	  _inherits(ImageSerializer, _SerializerStrategy);
+	
+	  function ImageSerializer() {
+	    _classCallCheck(this, ImageSerializer);
+	
+	    return _possibleConstructorReturn(this, (ImageSerializer.__proto__ || Object.getPrototypeOf(ImageSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(ImageSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'block-image') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      var properties = astNode[2][0][1][3];
+	
+	      _loglevel2.default.trace('img ast: ', astNode);
+	
+	      return ['<img src="' + properties.src + '" width="' + properties.width + '" height="' + properties.height + '" ' + ('alt="' + properties.alt + '"/>'), astNode[astNode.length - 1], '', false];
+	    }
+	  }]);
+	
+	  return ImageSerializer;
+	}(_index.SerializerStrategy);
+	
+	exports.default = ImageSerializer;
+
+/***/ },
+/* 729 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Marshaller = exports.SerializerStrategy = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	// import {ContentState, EditorState} from 'draft-js';
+	
+	
+	var _draftJsAstExporter = __webpack_require__(732);
+	
+	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
+	
+	var _loglevel = __webpack_require__(724);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	// eslint-disable-line no-unused-vars
+	
+	var SerializerStrategy = exports.SerializerStrategy = function () {
+	  function SerializerStrategy() {
+	    _classCallCheck(this, SerializerStrategy);
+	  }
+	
+	  _createClass(SerializerStrategy, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {}
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {}
+	  }, {
+	    key: 'deserialize',
+	    value: function deserialize(text) {}
+	  }]);
+	
+	  return SerializerStrategy;
+	}();
+	
+	var BlockSerializer = function (_SerializerStrategy) {
+	  _inherits(BlockSerializer, _SerializerStrategy);
+	
+	  function BlockSerializer() {
+	    _classCallCheck(this, BlockSerializer);
+	
+	    return _possibleConstructorReturn(this, (BlockSerializer.__proto__ || Object.getPrototypeOf(BlockSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(BlockSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'block') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['<div>', astNode[astNode.length - 1], '</div>'];
+	    }
+	  }]);
+	
+	  return BlockSerializer;
+	}(SerializerStrategy);
+	
+	var BranchSerializer = function (_SerializerStrategy2) {
+	  _inherits(BranchSerializer, _SerializerStrategy2);
+	
+	  function BranchSerializer() {
+	    _classCallCheck(this, BranchSerializer);
+	
+	    return _possibleConstructorReturn(this, (BranchSerializer.__proto__ || Object.getPrototypeOf(BranchSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(BranchSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (Array.isArray(astNode[0])) {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['<div class="branch">', astNode, '</div>', true];
+	    }
+	  }]);
+	
+	  return BranchSerializer;
+	}(SerializerStrategy);
+	
+	var InlineSerializer = function (_SerializerStrategy3) {
+	  _inherits(InlineSerializer, _SerializerStrategy3);
+	
+	  function InlineSerializer() {
+	    _classCallCheck(this, InlineSerializer);
+	
+	    var _this3 = _possibleConstructorReturn(this, (InlineSerializer.__proto__ || Object.getPrototypeOf(InlineSerializer)).call(this));
+	
+	    _this3.styles = [{ draft: 'BOLD', html: 'strong' }, { draft: 'ITALIC', html: 'italic' }, { draft: 'UNDERLINE', html: 'underline' }, { draft: 'CODE', html: 'monospace' }];
+	
+	    return _this3;
+	  }
+	
+	  _createClass(InlineSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'inline') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'findStyles',
+	    value: function findStyles(style) {
+	      var rval = void 0;
+	      var tmp = void 0;
+	
+	      _loglevel2.default.trace('finding style for: ', style);
+	      rval = this.styles.filter(function (knownStyle) {
+	        tmp = false;
+	        style.forEach(function (s) {
+	          if (knownStyle.draft === s) {
+	            tmp = true;
+	          }
+	        });
+	        return tmp;
+	      });
+	      _loglevel2.default.trace('found styles: ', rval);
+	
+	      return rval;
+	    }
+	
+	    // serialize(astNode) {
+	    //   const style = this.findStyles(astNode[1][0]);
+	    //   let rval = [];
+	    //   let index = 0;
+	    //
+	    //   if (style.length) {
+	    //     log.trace('style: ', style);
+	    //     style.forEach((item) => {
+	    //       rval.splice(index++, 0, '<' + item.html + '>');
+	    //       rval.splice(index, 0, '</' + item.html + '>');
+	    //     });
+	    //     rval.splice(index, 0, astNode[1][1]);
+	    //     return [rval.join(''), null, ''];
+	    //   }
+	    //
+	    //   return [astNode[1][1], null, ''];
+	    //
+	    // }
+	
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      var style = this.findStyles(astNode[1][0]);
+	      var styles = [];
+	
+	      if (style.length) {
+	        _loglevel2.default.trace('style: ', style);
+	        style.forEach(function (item) {
+	          styles.push(item.html);
+	          // rval.splice(index++, 0, '<' + item.html + '>');
+	          // rval.splice(index, 0, '</' + item.html + '>');
+	        });
+	        // rval.splice(index, 0, astNode[1][1]);
+	        return ['<span class="' + styles.join(' ') + '">', null, '</span>'];
+	      }
+	
+	      return ['<span>' + astNode[1][1], null, '</span>'];
+	    }
+	  }]);
+	
+	  return InlineSerializer;
+	}(SerializerStrategy);
+	
+	var SpanSerializer = function (_SerializerStrategy4) {
+	  _inherits(SpanSerializer, _SerializerStrategy4);
+	
+	  function SpanSerializer() {
+	    _classCallCheck(this, SpanSerializer);
+	
+	    return _possibleConstructorReturn(this, (SpanSerializer.__proto__ || Object.getPrototypeOf(SpanSerializer)).apply(this, arguments));
+	  }
+	
+	  _createClass(SpanSerializer, [{
+	    key: 'isValid',
+	    value: function isValid(astNode) {
+	      if (typeof astNode[0] === 'string' && astNode[0] === 'unstyled') {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: 'serialize',
+	    value: function serialize(astNode) {
+	      return ['<p>', astNode[astNode.length - 1], '</p>', true];
+	    }
+	  }]);
+	
+	  return SpanSerializer;
+	}(SerializerStrategy);
+	
+	var Marshaller = exports.Marshaller = function () {
+	  function Marshaller(serializers) {
+	    _classCallCheck(this, Marshaller);
+	
+	    this.serializers = [new BlockSerializer(), new SpanSerializer(), new InlineSerializer(), new BranchSerializer()].concat(serializers);
+	  }
+	
+	  _createClass(Marshaller, [{
+	    key: 'convertToHtml',
+	    value: function convertToHtml(editorState) {
+	      var output = [];
+	      var ast = (0, _draftJsAstExporter2.default)(editorState);
+	      var stack = [{ depth: 0, element: ast }];
+	      var outputOffset = 0;
+	      var current, serialized, element, strategy;
+	      var depth;
+	
+	      while (stack.length) {
+	        current = stack.pop();
+	        _loglevel2.default.trace('stack size: ', stack.length);
+	        _loglevel2.default.trace('Current: ', current);
+	
+	        depth = current.depth;
+	        element = current.element;
+	        strategy = this.findStrategy(element);
+	
+	        if (strategy) {
+	          _loglevel2.default.trace('Strategy found for element: ', strategy);
+	
+	          serialized = strategy.serialize(element);
+	          output.splice(outputOffset++, 0, serialized[0]);
+	          output.splice(outputOffset, 0, serialized[2]);
+	          if (serialized[3]) {
+	            serialized[1].reverse().forEach(function (item) {
+	              stack.push({ depth: depth + 1, element: item });
+	            });
+	          } else {
+	            stack.push({ depth: depth + 1, element: serialized[1] });
+	          }
+	          _loglevel2.default.trace('post stack size: ', stack.length);
+	        } else {
+	          _loglevel2.default.trace('No strategy found for element: ', element);
+	        }
+	      }
+	
+	      return output.join('');
+	    }
+	  }, {
+	    key: 'findStrategy',
+	    value: function findStrategy(element) {
+	      if (element == null) {
+	        return null;
+	      }
+	
+	      return this.serializers.reduce(function (previous, serializer) {
+	        // log.trace('findStrat: ', previous, serializer);
+	        if (previous) {
+	          return previous;
+	        }
+	
+	        if (serializer.isValid(element)) {
+	          return serializer;
+	        }
+	
+	        return null;
+	      }, null);
+	    }
+	  }]);
+	
+	  return Marshaller;
+	}();
+	
+	exports.default = Marshaller;
+
+/***/ },
+/* 730 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _index = __webpack_require__(712);
 	
@@ -73354,7 +73720,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _exportButton = __webpack_require__(729);
+	var _exportButton = __webpack_require__(731);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -73376,10 +73742,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _classCallCheck(this, ExportHtmlPlugin);
 	
 	    config.uiComponents = [{ component: _exportButton.SaveButton, type: '' }];
-	    config.renderComponentsDescriptors = [];
 	    config.theme = {};
 	    return _possibleConstructorReturn(this, (ExportHtmlPlugin.__proto__ || Object.getPrototypeOf(ExportHtmlPlugin)).call(this, config));
 	  }
+	
+	  _createClass(ExportHtmlPlugin, [{
+	    key: 'setMarshaller',
+	    value: function setMarshaller(marshaller) {
+	      this.marshaller = marshaller;
+	    }
+	  }]);
 	
 	  return ExportHtmlPlugin;
 	}(_index.BasePlugin);
@@ -73387,7 +73759,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ExportHtmlPlugin;
 
 /***/ },
-/* 729 */
+/* 731 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73403,11 +73775,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _draftJsAstExporter = __webpack_require__(730);
+	var _draftJsAstExporter = __webpack_require__(732);
 	
 	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
 	
-	var _index = __webpack_require__(739);
+	var _loglevel = __webpack_require__(724);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -73430,7 +73804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this = _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
 	
 	    _this.onActivate = _this.onActivate.bind(_this);
-	    _this.marshaller = new _index.Marshaller([]);
+	    // this.marshaller = new Marshaller([]);
 	    return _this;
 	  }
 	
@@ -73444,9 +73818,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var ast = (0, _draftJsAstExporter2.default)(editorState);
 	
 	      // console.log('ast', ast);
-	      console.log(JSON.stringify(ast));
-	      console.log('HTML', this.marshaller.convertToHtml(editorState));
-	      alert(this.marshaller.convertToHtml(editorState));
+	      _loglevel2.default.trace(JSON.stringify(ast));
+	      _loglevel2.default.trace('HTML', this.props.plugin.marshaller.convertToHtml(editorState));
+	      // alert(this.props.plugin.marshaller.convertToHtml(editorState));
 	
 	      return false;
 	    }
@@ -73467,7 +73841,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = SaveButton;
 
 /***/ },
-/* 730 */
+/* 732 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73476,7 +73850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _processor = __webpack_require__(731);
+	var _processor = __webpack_require__(733);
 	
 	var _processor2 = _interopRequireDefault(_processor);
 	
@@ -73502,7 +73876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = exporter;
 
 /***/ },
-/* 731 */
+/* 733 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73515,9 +73889,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _draftJsUtils = __webpack_require__(732);
+	var _draftJsUtils = __webpack_require__(734);
 	
-	var _dataSchema = __webpack_require__(738);
+	var _dataSchema = __webpack_require__(740);
 	
 	var _dataSchema2 = _interopRequireDefault(_dataSchema);
 	
@@ -73646,7 +74020,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = processBlocks;
 
 /***/ },
-/* 732 */
+/* 734 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73655,7 +74029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _Constants = __webpack_require__(733);
+	var _Constants = __webpack_require__(735);
 	
 	Object.keys(_Constants).forEach(function (key) {
 	  if (key === "default") return;
@@ -73673,7 +74047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _getEntityRanges = __webpack_require__(734);
+	var _getEntityRanges = __webpack_require__(736);
 	
 	Object.defineProperty(exports, 'getEntityRanges', {
 	  enumerable: true,
@@ -73682,7 +74056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _getSelectedBlocks = __webpack_require__(735);
+	var _getSelectedBlocks = __webpack_require__(737);
 	
 	Object.defineProperty(exports, 'getSelectedBlocks', {
 	  enumerable: true,
@@ -73691,7 +74065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _selectionContainsEntity = __webpack_require__(736);
+	var _selectionContainsEntity = __webpack_require__(738);
 	
 	Object.defineProperty(exports, 'selectionContainsEntity', {
 	  enumerable: true,
@@ -73700,7 +74074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _callModifierForSelectedBlocks = __webpack_require__(737);
+	var _callModifierForSelectedBlocks = __webpack_require__(739);
 	
 	Object.defineProperty(exports, 'callModifierForSelectedBlocks', {
 	  enumerable: true,
@@ -73712,7 +74086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 733 */
+/* 735 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -73757,7 +74131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 734 */
+/* 736 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73809,7 +74183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 735 */
+/* 737 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -73857,7 +74231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 736 */
+/* 738 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73866,7 +74240,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _getSelectedBlocks = __webpack_require__(735);
+	var _getSelectedBlocks = __webpack_require__(737);
 	
 	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
 	
@@ -73915,7 +74289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 737 */
+/* 739 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73926,7 +74300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _getSelectedBlocks = __webpack_require__(735);
+	var _getSelectedBlocks = __webpack_require__(737);
 	
 	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
 	
@@ -73997,7 +74371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 738 */
+/* 740 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -74033,277 +74407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = schemaMapping;
 
 /***/ },
-/* 739 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Marshaller = exports.SerializerStrategy = undefined;
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	// import {ContentState, EditorState} from 'draft-js';
-	
-	
-	var _draftJsAstExporter = __webpack_require__(730);
-	
-	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
-	
-	var _loglevel = __webpack_require__(724);
-	
-	var _loglevel2 = _interopRequireDefault(_loglevel);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	// eslint-disable-line no-unused-vars
-	
-	var SerializerStrategy = exports.SerializerStrategy = function () {
-	  function SerializerStrategy() {
-	    _classCallCheck(this, SerializerStrategy);
-	  }
-	
-	  _createClass(SerializerStrategy, [{
-	    key: 'isValid',
-	    value: function isValid(astNode) {}
-	  }, {
-	    key: 'serialize',
-	    value: function serialize(astNode) {}
-	  }, {
-	    key: 'deserialize',
-	    value: function deserialize(text) {}
-	  }]);
-	
-	  return SerializerStrategy;
-	}();
-	
-	var BlockSerializer = function (_SerializerStrategy) {
-	  _inherits(BlockSerializer, _SerializerStrategy);
-	
-	  function BlockSerializer() {
-	    _classCallCheck(this, BlockSerializer);
-	
-	    return _possibleConstructorReturn(this, (BlockSerializer.__proto__ || Object.getPrototypeOf(BlockSerializer)).apply(this, arguments));
-	  }
-	
-	  _createClass(BlockSerializer, [{
-	    key: 'isValid',
-	    value: function isValid(astNode) {
-	      if (typeof astNode[0] === 'string' && astNode[0] === 'block') {
-	        return true;
-	      }
-	      return false;
-	    }
-	  }, {
-	    key: 'serialize',
-	    value: function serialize(astNode) {
-	      return ['<div>', astNode[astNode.length - 1], '</div>'];
-	    }
-	  }]);
-	
-	  return BlockSerializer;
-	}(SerializerStrategy);
-	
-	var NilSerializer = function (_SerializerStrategy2) {
-	  _inherits(NilSerializer, _SerializerStrategy2);
-	
-	  function NilSerializer() {
-	    _classCallCheck(this, NilSerializer);
-	
-	    return _possibleConstructorReturn(this, (NilSerializer.__proto__ || Object.getPrototypeOf(NilSerializer)).apply(this, arguments));
-	  }
-	
-	  _createClass(NilSerializer, [{
-	    key: 'isValid',
-	    value: function isValid(astNode) {
-	      if (Array.isArray(astNode[0])) {
-	        return true;
-	      }
-	      return false;
-	    }
-	  }, {
-	    key: 'serialize',
-	    value: function serialize(astNode) {
-	      return ['', astNode[0], ''];
-	    }
-	  }]);
-	
-	  return NilSerializer;
-	}(SerializerStrategy);
-	
-	var InlineSerializer = function (_SerializerStrategy3) {
-	  _inherits(InlineSerializer, _SerializerStrategy3);
-	
-	  function InlineSerializer() {
-	    _classCallCheck(this, InlineSerializer);
-	
-	    var _this3 = _possibleConstructorReturn(this, (InlineSerializer.__proto__ || Object.getPrototypeOf(InlineSerializer)).call(this));
-	
-	    _this3.styles = [{ draft: 'BOLD', html: 'strong' }, { draft: 'ITALIC', html: 'i' }, { draft: 'UNDERLINE', html: 'u' }, { draft: 'CODE', html: 'code' }];
-	
-	    return _this3;
-	  }
-	
-	  _createClass(InlineSerializer, [{
-	    key: 'isValid',
-	    value: function isValid(astNode) {
-	      if (typeof astNode[0] === 'string' && astNode[0] === 'inline') {
-	        return true;
-	      }
-	      return false;
-	    }
-	  }, {
-	    key: 'findStyles',
-	    value: function findStyles(style) {
-	      var rval = void 0;
-	      var tmp = void 0;
-	
-	      _loglevel2.default.trace('finding style for: ', style);
-	      rval = this.styles.filter(function (knownStyle) {
-	        tmp = false;
-	        style.forEach(function (s) {
-	          if (knownStyle.draft === s) {
-	            tmp = true;
-	          }
-	        });
-	        return tmp;
-	      });
-	      _loglevel2.default.trace('found styles: ', rval);
-	
-	      return rval;
-	    }
-	  }, {
-	    key: 'serialize',
-	    value: function serialize(astNode) {
-	      var style = this.findStyles(astNode[1][0]);
-	      var rval = [];
-	      var index = 0;
-	
-	      if (style.length) {
-	        _loglevel2.default.trace('style: ', style);
-	        style.forEach(function (item) {
-	          rval.splice(index++, 0, '<' + item.html + '>');
-	          rval.splice(index, 0, '</' + item.html + '>');
-	        });
-	        rval.splice(index, 0, astNode[1][1]);
-	        return [rval.join(''), null, ''];
-	      }
-	
-	      return [astNode[1][1], null, ''];
-	    }
-	  }]);
-	
-	  return InlineSerializer;
-	}(SerializerStrategy);
-	
-	var SpanSerializer = function (_SerializerStrategy4) {
-	  _inherits(SpanSerializer, _SerializerStrategy4);
-	
-	  function SpanSerializer() {
-	    _classCallCheck(this, SpanSerializer);
-	
-	    return _possibleConstructorReturn(this, (SpanSerializer.__proto__ || Object.getPrototypeOf(SpanSerializer)).apply(this, arguments));
-	  }
-	
-	  _createClass(SpanSerializer, [{
-	    key: 'isValid',
-	    value: function isValid(astNode) {
-	      if (typeof astNode[0] === 'string' && astNode[0] === 'unstyled') {
-	        return true;
-	      }
-	      return false;
-	    }
-	  }, {
-	    key: 'serialize',
-	    value: function serialize(astNode) {
-	      return ['<span>', astNode[astNode.length - 1], '</span>', true];
-	    }
-	  }]);
-	
-	  return SpanSerializer;
-	}(SerializerStrategy);
-	
-	var Marshaller = exports.Marshaller = function () {
-	  function Marshaller(serializers) {
-	    _classCallCheck(this, Marshaller);
-	
-	    this.serializers = [new BlockSerializer(), new SpanSerializer(), new NilSerializer(), new InlineSerializer()].concat(serializers);
-	  }
-	
-	  _createClass(Marshaller, [{
-	    key: 'convertToHtml',
-	    value: function convertToHtml(editorState) {
-	      var output = [];
-	      var ast = (0, _draftJsAstExporter2.default)(editorState);
-	      var stack = [{ depth: 0, element: ast }];
-	      var outputOffset = 0;
-	      var current, serialized, element, strategy;
-	      var depth;
-	
-	      while (stack.length) {
-	        current = stack.pop();
-	        _loglevel2.default.trace('Current: ', current);
-	
-	        depth = current.depth;
-	        element = current.element;
-	        strategy = this.findStrategy(element);
-	
-	        if (strategy) {
-	          // log.trace('Strategy found for element: ', strategy);
-	
-	          serialized = strategy.serialize(element);
-	          output.splice(outputOffset++, 0, serialized[0]);
-	          output.splice(outputOffset, 0, serialized[2]);
-	          if (serialized[3]) {
-	            serialized[1].reverse().forEach(function (item) {
-	              stack.push({ depth: depth + 1, element: item });
-	            });
-	          } else {
-	            stack.push({ depth: depth + 1, element: serialized[1] });
-	          }
-	        } else {
-	          _loglevel2.default.trace('No strategy found for element: ', element);
-	        }
-	      }
-	
-	      return output.join('');
-	    }
-	  }, {
-	    key: 'findStrategy',
-	    value: function findStrategy(element) {
-	      if (element == null) {
-	        return null;
-	      }
-	
-	      return this.serializers.reduce(function (previous, serializer) {
-	        // log.trace('findStrat: ', previous, serializer);
-	        if (previous) {
-	          return previous;
-	        }
-	
-	        if (serializer.isValid(element)) {
-	          return serializer;
-	        }
-	
-	        return null;
-	      }, null);
-	    }
-	  }]);
-	
-	  return Marshaller;
-	}();
-	
-	exports.default = Marshaller;
-
-/***/ },
-/* 740 */
+/* 741 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     uuid.js
@@ -74314,7 +74418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Unique ID creation requires a high quality random # generator.  We feature
 	// detect to determine the best RNG source, normalizing to a function that
 	// returns 128-bits of randomness, since that's what's usually required
-	var _rng = __webpack_require__(741);
+	var _rng = __webpack_require__(742);
 	
 	// Maps for number <-> hex string conversion
 	var _byteToHex = [];
@@ -74492,7 +74596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 741 */
+/* 742 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -74530,7 +74634,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 742 */
+/* 743 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74543,7 +74647,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _removeBlock = __webpack_require__(743);
+	var _removeBlock = __webpack_require__(744);
 	
 	var _removeBlock2 = _interopRequireDefault(_removeBlock);
 	
@@ -74590,7 +74694,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = entityPropsPlugin;
 
 /***/ },
-/* 743 */
+/* 744 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

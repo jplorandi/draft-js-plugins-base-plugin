@@ -18,6 +18,8 @@ import createEntityPropsPlugin from 'draft-js-entity-props-plugin';
 import {Map} from 'immutable'; // eslint-disable-line no-unused-vars
 import { DefaultDraftBlockRenderMap } from 'draft-js';
 
+import Marshaller from '../src/export-html';
+
 const entityPlugin = createEntityPropsPlugin();
 
 const imageTheme = {
@@ -86,6 +88,9 @@ class EmbeddableEditor extends Component {
       (ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />));
     this.buttons = this.buttons.concat(exportToolbarComponents.map(
       (ToolbarComponent) => <ToolbarComponent key={uuid.v4() } />));
+
+    this.marshaller = new Marshaller(imagePlugin.serializers);
+    exportPlugin.setMarshaller(this.marshaller);
 
     this.onChange = this.onChange.bind(this);
   }
