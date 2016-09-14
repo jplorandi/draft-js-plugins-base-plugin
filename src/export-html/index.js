@@ -80,25 +80,6 @@ class InlineSerializer extends SerializerStrategy {
     return rval;
   }
 
-  // serialize(astNode) {
-  //   const style = this.findStyles(astNode[1][0]);
-  //   let rval = [];
-  //   let index = 0;
-  //
-  //   if (style.length) {
-  //     log.trace('style: ', style);
-  //     style.forEach((item) => {
-  //       rval.splice(index++, 0, '<' + item.html + '>');
-  //       rval.splice(index, 0, '</' + item.html + '>');
-  //     });
-  //     rval.splice(index, 0, astNode[1][1]);
-  //     return [rval.join(''), null, ''];
-  //   }
-  //
-  //   return [astNode[1][1], null, ''];
-  //
-  // }
-
   serialize(astNode) {
     const style = this.findStyles(astNode[1][0]);
     let styles = [];
@@ -111,10 +92,10 @@ class InlineSerializer extends SerializerStrategy {
         // rval.splice(index, 0, '</' + item.html + '>');
       });
       // rval.splice(index, 0, astNode[1][1]);
-      return ['<span class="' + styles.join(' ') + '">', null, '</span>'];
+      return ['<span class="' + styles.join(' ') + '">' + astNode[1][1] + '</span>', null, ''];
     }
 
-    return ['<span>' + astNode[1][1], null, '</span>'];
+    return ['<span>' + astNode[1][1] + '</span>', null, ''];
 
   }
 }
@@ -160,7 +141,6 @@ export class Marshaller {
 
         serialized = strategy.serialize(element);
         output.splice(outputOffset++, 0, serialized[0]);
-        output.splice(outputOffset, 0, serialized[2]);
         if (serialized[3]) {
           serialized[1].reverse().forEach((item) => {
             stack.push({depth: depth + 1, element: item});
@@ -170,6 +150,8 @@ export class Marshaller {
           stack.push({depth: depth + 1, element: serialized[1]});
         }
         log.trace('post stack size: ', stack.length);
+        output.splice(outputOffset--, 0, serialized[2]);
+
       } else {
         log.trace('No strategy found for element: ', element);
       }

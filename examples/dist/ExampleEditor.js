@@ -29435,7 +29435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _index2 = _interopRequireDefault(_index);
 	
-	var _index3 = __webpack_require__(730);
+	var _index3 = __webpack_require__(739);
 	
 	var _index4 = _interopRequireDefault(_index3);
 	
@@ -73425,7 +73425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	// import {ContentState, EditorState} from 'draft-js';
 	
 	
-	var _draftJsAstExporter = __webpack_require__(732);
+	var _draftJsAstExporter = __webpack_require__(730);
 	
 	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
 	
@@ -73557,26 +73557,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      return rval;
 	    }
-	
-	    // serialize(astNode) {
-	    //   const style = this.findStyles(astNode[1][0]);
-	    //   let rval = [];
-	    //   let index = 0;
-	    //
-	    //   if (style.length) {
-	    //     log.trace('style: ', style);
-	    //     style.forEach((item) => {
-	    //       rval.splice(index++, 0, '<' + item.html + '>');
-	    //       rval.splice(index, 0, '</' + item.html + '>');
-	    //     });
-	    //     rval.splice(index, 0, astNode[1][1]);
-	    //     return [rval.join(''), null, ''];
-	    //   }
-	    //
-	    //   return [astNode[1][1], null, ''];
-	    //
-	    // }
-	
 	  }, {
 	    key: 'serialize',
 	    value: function serialize(astNode) {
@@ -73591,10 +73571,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          // rval.splice(index, 0, '</' + item.html + '>');
 	        });
 	        // rval.splice(index, 0, astNode[1][1]);
-	        return ['<span class="' + styles.join(' ') + '">', null, '</span>'];
+	        return ['<span class="' + styles.join(' ') + '">' + astNode[1][1] + '</span>', null, ''];
 	      }
 	
-	      return ['<span>' + astNode[1][1], null, '</span>'];
+	      return ['<span>' + astNode[1][1] + '</span>', null, ''];
 	    }
 	  }]);
 	
@@ -73659,7 +73639,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	          serialized = strategy.serialize(element);
 	          output.splice(outputOffset++, 0, serialized[0]);
-	          output.splice(outputOffset, 0, serialized[2]);
 	          if (serialized[3]) {
 	            serialized[1].reverse().forEach(function (item) {
 	              stack.push({ depth: depth + 1, element: item });
@@ -73668,6 +73647,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            stack.push({ depth: depth + 1, element: serialized[1] });
 	          }
 	          _loglevel2.default.trace('post stack size: ', stack.length);
+	          output.splice(outputOffset--, 0, serialized[2]);
 	        } else {
 	          _loglevel2.default.trace('No strategy found for element: ', element);
 	        }
@@ -73712,145 +73692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _index = __webpack_require__(712);
-	
-	var _react = __webpack_require__(463);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _exportButton = __webpack_require__(731);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
-	// import ImageRenderer from './image-renderer';
-	
-	
-	/**
-	 * This is our plugin
-	 */
-	var ExportHtmlPlugin = function (_BasePlugin) {
-	  _inherits(ExportHtmlPlugin, _BasePlugin);
-	
-	  function ExportHtmlPlugin(config) {
-	    _classCallCheck(this, ExportHtmlPlugin);
-	
-	    config.uiComponents = [{ component: _exportButton.SaveButton, type: '' }];
-	    config.theme = {};
-	    return _possibleConstructorReturn(this, (ExportHtmlPlugin.__proto__ || Object.getPrototypeOf(ExportHtmlPlugin)).call(this, config));
-	  }
-	
-	  _createClass(ExportHtmlPlugin, [{
-	    key: 'setMarshaller',
-	    value: function setMarshaller(marshaller) {
-	      this.marshaller = marshaller;
-	    }
-	  }]);
-	
-	  return ExportHtmlPlugin;
-	}(_index.BasePlugin);
-	
-	exports.default = ExportHtmlPlugin;
-
-/***/ },
-/* 731 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.SaveButton = undefined;
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(463);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _draftJsAstExporter = __webpack_require__(732);
-	
-	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
-	
-	var _loglevel = __webpack_require__(724);
-	
-	var _loglevel2 = _interopRequireDefault(_loglevel);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
-	
-	
-	/**
-	 * This class is a toolbar component, to create/update/delete a block
-	 */
-	var SaveButton = exports.SaveButton = function (_React$Component) {
-	  _inherits(SaveButton, _React$Component);
-	
-	  function SaveButton(props) {
-	    _classCallCheck(this, SaveButton);
-	
-	    var _this = _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
-	
-	    _this.onActivate = _this.onActivate.bind(_this);
-	    // this.marshaller = new Marshaller([]);
-	    return _this;
-	  }
-	
-	  _createClass(SaveButton, [{
-	    key: 'onActivate',
-	    value: function onActivate(event) {
-	      event.stopPropagation();
-	      event.preventDefault();
-	
-	      var editorState = this.props.plugin.store.getEditorState();
-	      var ast = (0, _draftJsAstExporter2.default)(editorState);
-	
-	      // console.log('ast', ast);
-	      _loglevel2.default.trace(JSON.stringify(ast));
-	      _loglevel2.default.trace('HTML', this.props.plugin.marshaller.convertToHtml(editorState));
-	      // alert(this.props.plugin.marshaller.convertToHtml(editorState));
-	
-	      return false;
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'button',
-	        { onClick: this.onActivate },
-	        'Save HTML'
-	      );
-	    }
-	  }]);
-	
-	  return SaveButton;
-	}(_react2.default.Component);
-	
-	exports.default = SaveButton;
-
-/***/ },
-/* 732 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _processor = __webpack_require__(733);
+	var _processor = __webpack_require__(731);
 	
 	var _processor2 = _interopRequireDefault(_processor);
 	
@@ -73876,7 +73718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = exporter;
 
 /***/ },
-/* 733 */
+/* 731 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -73889,9 +73731,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _draftJsUtils = __webpack_require__(734);
+	var _draftJsUtils = __webpack_require__(732);
 	
-	var _dataSchema = __webpack_require__(740);
+	var _dataSchema = __webpack_require__(738);
 	
 	var _dataSchema2 = _interopRequireDefault(_dataSchema);
 	
@@ -74020,7 +73862,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = processBlocks;
 
 /***/ },
-/* 734 */
+/* 732 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74029,7 +73871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _Constants = __webpack_require__(735);
+	var _Constants = __webpack_require__(733);
 	
 	Object.keys(_Constants).forEach(function (key) {
 	  if (key === "default") return;
@@ -74047,7 +73889,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _getEntityRanges = __webpack_require__(736);
+	var _getEntityRanges = __webpack_require__(734);
 	
 	Object.defineProperty(exports, 'getEntityRanges', {
 	  enumerable: true,
@@ -74056,7 +73898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _getSelectedBlocks = __webpack_require__(737);
+	var _getSelectedBlocks = __webpack_require__(735);
 	
 	Object.defineProperty(exports, 'getSelectedBlocks', {
 	  enumerable: true,
@@ -74065,7 +73907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _selectionContainsEntity = __webpack_require__(738);
+	var _selectionContainsEntity = __webpack_require__(736);
 	
 	Object.defineProperty(exports, 'selectionContainsEntity', {
 	  enumerable: true,
@@ -74074,7 +73916,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 	
-	var _callModifierForSelectedBlocks = __webpack_require__(739);
+	var _callModifierForSelectedBlocks = __webpack_require__(737);
 	
 	Object.defineProperty(exports, 'callModifierForSelectedBlocks', {
 	  enumerable: true,
@@ -74086,7 +73928,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ },
-/* 735 */
+/* 733 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -74131,7 +73973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 736 */
+/* 734 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74183,7 +74025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 737 */
+/* 735 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -74231,7 +74073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 738 */
+/* 736 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74240,7 +74082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _getSelectedBlocks = __webpack_require__(737);
+	var _getSelectedBlocks = __webpack_require__(735);
 	
 	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
 	
@@ -74289,7 +74131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 739 */
+/* 737 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74300,7 +74142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _draftJs = __webpack_require__(470);
 	
-	var _getSelectedBlocks = __webpack_require__(737);
+	var _getSelectedBlocks = __webpack_require__(735);
 	
 	var _getSelectedBlocks2 = _interopRequireDefault(_getSelectedBlocks);
 	
@@ -74371,7 +74213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 740 */
+/* 738 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -74405,6 +74247,144 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	exports.default = schemaMapping;
+
+/***/ },
+/* 739 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _index = __webpack_require__(712);
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _exportButton = __webpack_require__(740);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
+	// import ImageRenderer from './image-renderer';
+	
+	
+	/**
+	 * This is our plugin
+	 */
+	var ExportHtmlPlugin = function (_BasePlugin) {
+	  _inherits(ExportHtmlPlugin, _BasePlugin);
+	
+	  function ExportHtmlPlugin(config) {
+	    _classCallCheck(this, ExportHtmlPlugin);
+	
+	    config.uiComponents = [{ component: _exportButton.SaveButton, type: '' }];
+	    config.theme = {};
+	    return _possibleConstructorReturn(this, (ExportHtmlPlugin.__proto__ || Object.getPrototypeOf(ExportHtmlPlugin)).call(this, config));
+	  }
+	
+	  _createClass(ExportHtmlPlugin, [{
+	    key: 'setMarshaller',
+	    value: function setMarshaller(marshaller) {
+	      this.marshaller = marshaller;
+	    }
+	  }]);
+	
+	  return ExportHtmlPlugin;
+	}(_index.BasePlugin);
+	
+	exports.default = ExportHtmlPlugin;
+
+/***/ },
+/* 740 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.SaveButton = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(463);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _draftJsAstExporter = __webpack_require__(730);
+	
+	var _draftJsAstExporter2 = _interopRequireDefault(_draftJsAstExporter);
+	
+	var _loglevel = __webpack_require__(724);
+	
+	var _loglevel2 = _interopRequireDefault(_loglevel);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // eslint-disable-line no-unused-vars
+	
+	
+	/**
+	 * This class is a toolbar component, to create/update/delete a block
+	 */
+	var SaveButton = exports.SaveButton = function (_React$Component) {
+	  _inherits(SaveButton, _React$Component);
+	
+	  function SaveButton(props) {
+	    _classCallCheck(this, SaveButton);
+	
+	    var _this = _possibleConstructorReturn(this, (SaveButton.__proto__ || Object.getPrototypeOf(SaveButton)).call(this, props));
+	
+	    _this.onActivate = _this.onActivate.bind(_this);
+	    // this.marshaller = new Marshaller([]);
+	    return _this;
+	  }
+	
+	  _createClass(SaveButton, [{
+	    key: 'onActivate',
+	    value: function onActivate(event) {
+	      event.stopPropagation();
+	      event.preventDefault();
+	
+	      var editorState = this.props.plugin.store.getEditorState();
+	      var ast = (0, _draftJsAstExporter2.default)(editorState);
+	
+	      // console.log('ast', ast);
+	      _loglevel2.default.trace(JSON.stringify(ast));
+	      _loglevel2.default.trace('HTML', this.props.plugin.marshaller.convertToHtml(editorState));
+	      // alert(this.props.plugin.marshaller.convertToHtml(editorState));
+	
+	      return false;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'button',
+	        { onClick: this.onActivate },
+	        'Save HTML'
+	      );
+	    }
+	  }]);
+	
+	  return SaveButton;
+	}(_react2.default.Component);
+	
+	exports.default = SaveButton;
 
 /***/ },
 /* 741 */
